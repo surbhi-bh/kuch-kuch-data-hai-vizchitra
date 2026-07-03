@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Speaker View</title>
+<style>
+  body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+    background: #f7f7f7;
+    color: #222;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #current-slide,
+  #upcoming-slide,
+  #speaker-controls {
+    padding: 6px;
+    box-sizing: border-box;
+    position: absolute;
+  }
+
+  #current-slide .slide-frame,
+  #upcoming-slide .slide-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    border: 1px solid #ddd;
+    overflow: hidden;
+  }
+
+  #current-slide iframe,
+  #upcoming-slide iframe {
+    border: 0;
+    background: #fff;
+    transform-origin: top left;
+    position: absolute;
+  }
+
+  .label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    height: 34px;
+    line-height: 34px;
+    padding: 0 10px;
+    text-shadow: none;
+    background: rgba(220, 220, 220, 0.85);
+    color: #222;
+    font-size: 14px;
+    border-radius: 3px;
+  }
+
+  /* Default layout (reveal.js style) */
+  #current-slide {
+    width: 60%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    padding-right: 0;
+  }
+
+  #upcoming-slide {
+    width: 40%;
+    height: 40%;
+    right: 0;
+    top: 0;
+  }
+
+  #speaker-controls {
+    top: 40%;
+    right: 0;
+    width: 40%;
+    height: 60%;
+    overflow: auto;
+    font-size: 18px;
+  }
+
+  .speaker-controls-time,
+  .speaker-controls-pace {
+    border-bottom: 1px solid rgba(200, 200, 200, 0.7);
+    margin-bottom: 10px;
+    padding: 10px 16px 20px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .speaker-controls-time .label,
+  .speaker-controls-pace .label,
+  .speaker-controls-notes .label {
+    position: static;
+    background: none;
+    padding: 0;
+    height: auto;
+    line-height: normal;
+    text-transform: uppercase;
+    font-weight: normal;
+    font-size: 0.66em;
+    color: #666;
+    margin: 0;
+    display: block;
+  }
+
+  .speaker-controls-time .reset-button {
+    opacity: 0;
+    float: right;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.7em;
+    line-height: 1.9em;
+  }
+
+  .speaker-controls-time:hover .reset-button {
+    opacity: 1;
+  }
+
+  .speaker-controls-time .timer,
+  .speaker-controls-time .clock {
+    width: 50%;
+    font-size: 1.9em;
+  }
+
+  .speaker-controls-time .timer {
+    float: left;
+  }
+
+  .speaker-controls-time .clock {
+    float: right;
+    text-align: right;
+  }
+
+  .speaker-controls-time span.mute {
+    opacity: 0.3;
+  }
+
+  .clear { clear: both; }
+
+  .speaker-controls-notes {
+    padding: 10px 16px;
+  }
+
+  .speaker-controls-notes .value {
+    margin-top: 5px;
+    line-height: 1.4;
+    font-size: 1.2em;
+    white-space: pre-wrap;
+  }
+
+  #status-bar {
+    position: fixed;
+    bottom: 6px;
+    right: 12px;
+    font-size: 12px;
+    color: #888;
+    z-index: 30;
+  }
+
+  #hint-bar {
+    position: fixed;
+    bottom: 6px;
+    left: 12px;
+    font-size: 12px;
+    color: #888;
+    z-index: 30;
+  }
+</style>
+</head>
+<body>
+
+<div id="current-slide">
+  <span class="label">Current</span>
+  <div class="slide-frame"><iframe id="nowF"></iframe></div>
+</div>
+
+<div id="upcoming-slide">
+  <span class="label">Upcoming</span>
+  <div class="slide-frame"><iframe id="nextF"></iframe></div>
+</div>
+
+<div id="speaker-controls">
+  <div class="speaker-controls-time" title="Click to reset the timer">
+    <h4 class="label">Time <a href="#" class="reset-button" id="resetTimer">Click to reset</a></h4>
+    <div class="clock"><span id="clockValue">--:--</span></div>
+    <div class="timer"><span id="timerValue">00:00:00</span></div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="speaker-controls-notes">
+    <h4 class="label">Notes</h4>
+    <div class="value" id="notesEl">(no notes)</div>
+  </div>
+</div>
+
+<div id="hint-bar">arrows navigate the main deck</div>
+<div id="status-bar"><span id="statusEl">–</span></div>
+
+<script>
+  const CHANNEL = 'vc-bollywood-notes';
+  const BASE = 'slides.html';
+  const bc = new BroadcastChannel(CHANNEL);
+  const nowF = document.getElementById('nowF');
+  const nextF = document.getElementById('nextF');
+  const notesEl = document.getElementById('notesEl');
+  const statusEl = document.getElementById('statusEl');
+  const clockValue = document.getElementById('clockValue');
+  const timerValue = document.getElementById('timerValue');
+  const resetTimer = document.getElementById('resetTimer');
+
+  // Fit each 1280x720 iframe into its parent .slide-frame.
+  function fit(f) {
+    const b = f.parentElement.getBoundingClientRect();
+    if (b.width < 10 || b.height < 10) return;
+    const s = Math.min(b.width / 1280, b.height / 720);
+    f.style.width = '1280px';
+    f.style.height = '720px';
+    f.style.transform = 'scale(' + s + ')';
+    f.style.left = ((b.width - 1280 * s) / 2) + 'px';
+    f.style.top = ((b.height - 720 * s) / 2) + 'px';
+  }
+  function refit() { fit(nowF); fit(nextF); }
+  window.addEventListener('resize', refit);
+
+  // Preload with slide 0 so something shows before the main deck responds
+  nowF.src = BASE + '#p=0&r=0';
+  nextF.src = BASE + '#p=1&r=0';
+  setTimeout(refit, 120);
+  nowF.addEventListener('load', refit);
+  nextF.addEventListener('load', refit);
+
+  bc.addEventListener('message', (ev) => {
+    if (!ev.data || ev.data.type !== 'state') return;
+    const { index, total, notes } = ev.data;
+    statusEl.textContent = (index + 1) + ' / ' + total;
+    notesEl.textContent = notes || '(no notes)';
+    nowF.src = BASE + '#p=' + index + '&r=0';
+    nextF.src = BASE + '#p=' + Math.min(index + 1, total - 1) + '&r=0';
+    setTimeout(refit, 80);
+  });
+
+  // Ask the main deck for its current state
+  bc.postMessage({ type: 'poll' });
+
+  // Arrow keys navigate the main deck
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') bc.postMessage({ type: 'nav', dir: 'next' });
+    if (e.key === 'ArrowLeft') bc.postMessage({ type: 'nav', dir: 'prev' });
+  });
+
+  // ============ Clock + Timer ============
+  let timerStart = Date.now();
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  function tick() {
+    const now = new Date();
+    const hh = pad(now.getHours());
+    const mm = pad(now.getMinutes());
+    clockValue.innerHTML = hh + '<span class="mute">:</span>' + mm;
+
+    const elapsed = Math.floor((Date.now() - timerStart) / 1000);
+    const h = Math.floor(elapsed / 3600);
+    const m = Math.floor((elapsed % 3600) / 60);
+    const s = elapsed % 60;
+    timerValue.innerHTML =
+      pad(h) + '<span class="mute">:</span>' +
+      pad(m) + '<span class="mute">:</span>' +
+      pad(s);
+  }
+  setInterval(tick, 1000);
+  tick();
+
+  resetTimer.addEventListener('click', (e) => {
+    e.preventDefault();
+    timerStart = Date.now();
+    tick();
+  });
+  document.querySelector('.speaker-controls-time').addEventListener('click', (e) => {
+    if (e.target === resetTimer) return;
+    timerStart = Date.now();
+    tick();
+  });
+</script>
+</body>
+</html>

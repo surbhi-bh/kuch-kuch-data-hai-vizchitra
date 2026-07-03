@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Akshay Kumar Refuses to Romance a Woman Over 40</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  :root{
+    --bg:#080814;
+    --orange:#ff6b35;
+    --teal:#2ec4b6;
+    --white:#ffffff;
+    --muted:#9bb0c9;
+    --grid:#1c2540;
+  }
+  html,body{
+    margin:0;padding:0;
+    background:var(--bg);
+    color:var(--white);
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    height:100%;
+    overflow:hidden;
+  }
+  .wrap{
+    width:100vw;height:100vh;
+    box-sizing:border-box;
+    padding:0;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .frame{
+    box-sizing:border-box;
+    border:1px solid #ffffff;
+    background:var(--bg);
+    padding:22px 28px 18px;
+    display:flex;flex-direction:column;
+    position:relative;
+    aspect-ratio:1 / 1;
+    height:min(100vh, 100vw);
+    width:min(100vh, 100vw);
+  }
+  h1{
+    font-size:17px;
+    letter-spacing:0.5px;
+    margin:0 0 8px;
+    font-weight:300;
+    line-height:1.2;
+    text-align:left;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  h1 .ak, h1 .tag{font-weight:500;}
+  h1 .ak{color:var(--orange);}
+  h1 .mid{color:var(--white);}
+  h1 .tag{color:var(--teal);}
+  svg{
+    display:block;
+    flex:1;
+    min-height:0;
+    width:100%;
+    margin:0 auto;
+  }
+  .axis text{fill:var(--muted);font-size:22px;font-weight:500;}
+  .axis path,.axis line{stroke:transparent;}
+  .gridline{stroke:var(--grid);stroke-width:1px;}
+  .bar{fill:var(--teal);cursor:pointer;transition:fill .15s;}
+  .bar:hover{fill:#ffffff;}
+  .bar-label{fill:var(--teal);font-size:19px;text-anchor:middle;font-weight:700;}
+  .line{fill:none;stroke:var(--orange);stroke-width:2.2px;}
+  .dot{fill:var(--bg);stroke:var(--orange);stroke-width:2px;}
+  .line-label{fill:var(--orange);font-size:19px;text-anchor:middle;font-weight:700;}
+  .limit-line{stroke:var(--muted);stroke-width:1px;fill:none;}
+  .limit-tag{fill:var(--muted);font-size:13px;font-weight:500;}
+  .limit-circle{fill:none;stroke:var(--muted);stroke-width:1.2px;}
+  .limit-num{fill:var(--teal);font-size:11px;font-weight:700;text-anchor:middle;}
+  .legend text{fill:var(--white);font-size:20px;font-weight:500;}
+  #tooltip{
+    position:absolute;
+    pointer-events:none;
+    background:#0a1126;
+    border:1px solid var(--teal);
+    border-radius:6px;
+    padding:8px 10px;
+    font-size:12px;
+    color:var(--white);
+    line-height:1.45;
+    box-shadow:0 4px 12px rgba(0,0,0,.5);
+    opacity:0;
+    transition:opacity .12s;
+    z-index:10;
+    min-width:160px;
+  }
+  #tooltip .ttl{color:var(--orange);font-weight:700;margin-bottom:3px;}
+  #tooltip .row{display:flex;justify-content:space-between;gap:12px;}
+  #tooltip .k{color:var(--muted);}
+  #tooltip .gap{color:var(--teal);font-weight:700;margin-top:4px;border-top:1px solid #23365c;padding-top:4px;}
+  .toggle{
+    position:absolute;
+    top:18px;right:18px;
+    display:inline-flex;align-items:center;gap:10px;
+    margin:0;padding:6px 12px;
+    background:#0e1430;border:1px solid #23365c;border-radius:999px;
+    color:var(--white);font-size:12px;cursor:pointer;user-select:none;
+    font-family:inherit;
+    z-index:20;
+  }
+  .toggle:hover{border-color:var(--teal);}
+  .toggle .sw{
+    width:28px;height:16px;background:#23365c;border-radius:999px;position:relative;transition:background .2s;
+  }
+  .toggle .sw::after{
+    content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;
+    background:var(--white);border-radius:50%;transition:transform .2s;
+  }
+  .toggle.on .sw{background:var(--teal);}
+  .toggle.on .sw::after{transform:translateX(12px);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="frame">
+    <h1><span class="ak">AKSHAY KUMAR</span> <span class="mid">REFUSES TO ROMANCE</span> <span class="tag">A WOMAN OVER 40</span></h1>
+    <svg id="chart" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+  <div id="tooltip"></div>
+</div>
+
+<script>
+const raw = `Year,Title,RI,RI_Year,RI_Age,AK_Age
+1987,Aaj,,,,20
+1991,Saugandh,Shantipriya,1969,22,24
+1991,Dancer,Mohini,1976,15,24
+1992,Khiladi,Ayesha Jhulka,1972,20,25
+1992,Mr. Bond,Sheeba,1970,22,25
+1992,Deedar,Karisma Kapoor,1974,18,25
+1993,Ashaant,Ashwini Bhave,1972,21,26
+1993,Dil Ki Baazi,Ayesha Jhulka,1972,21,26
+1993,Kayda Kanoon,Ashwini Bhave,1972,21,26
+1993,Waqt Hamara Hai,Ayesha Jhulka,1972,21,26
+1993,Sainik,Ashwini Bhave,1967,26,26
+1994,Elaan,Madhoo,1969,25,27
+1994,Yeh Dillagi,Kajol,1974,20,27
+1994,Jai Kishen,Ayesha Jhulka,1972,22,27
+1994,Mohra,Raveena Tandon,1972,22,27
+1994,Main Khiladi Tu Anari,Shilpa Shetty,1975,19,27
+1994,Suhaag,Karisma Kapoor,1974,20,27
+1994,Zakhmi Dil,Ashwini Bhave,1967,27,27
+1994,Zaalim,Madhoo,1969,25,27
+1994,Hum Hain Bemisaal,Madhoo,1969,25,27
+1995,Maidan-E-Jung,Karisma Kapoor,1974,21,28
+1995,Nazar Ke Samne,Farheen,1973,22,28
+1995,Sabse Bada Khiladi,Mamta Kulkarni,1972,23,28
+1996,Tu Chor Main Sipahi,Tabu,1971,25,29
+1996,Khiladiyon Ka Khiladi,Raveena Tandon,1974,22,29
+1996,Sapoot,Karisma Kapoor,1974,22,29
+1997,Lahoo Ke Do Rang,Karisma Kapoor,1974,23,30
+1997,Insaaf,Shilpa Shetty,1975,22,30
+1997,Daava,Raveena Tandon,1974,23,30
+1997,Tarazu,Sonali Bendre,1975,22,30
+1997,Mr. and Mrs. Khiladi,Juhi Chawla,1967,30,30
+1997,Aflatoon,Urmila Matondkar,1974,23,30
+1998,Keemat,Raveena Tandon,1974,24,31
+1998,Angaaray,Sonali Bendre,1975,23,31
+1998,Barood,Raveena Tandon,1974,24,31
+1999,Sangharsh,Preity Zinta,1975,24,32
+1999,Aarzoo,Madhuri Dixit,1967,32,32
+1999,International Khiladi,Twinkle Khanna,1974,25,32
+1999,Zulmi,Twinkle Khanna,1974,25,32
+1999,Jaanwar,Karisma Kapoor,1974,25,32
+2000,Hera Pheri,Tabu,1971,29,33
+2000,Dhadkan,Shilpa Shetty,1975,25,33
+2000,Khiladi 420,Mahima Chaudhry,1973,27,33
+2001,Ajnabee,Kareena Kapoor,1980,21,34
+2001,Ek Rishtaa,Karisma Kapoor,1974,27,34
+2002,Haan Maine Bhi Pyaar Kiya,Karisma Kapoor,1974,28,35
+2002,Aankhen,Sushmita Sen,1975,27,35
+2002,Awara Paagal Deewana,Preeti Jhangiani,1980,22,35
+2002,Jaani Dushman,Manisha Koirala,1970,32,35
+2003,Talaash,Kareena Kapoor,1980,23,36
+2003,Andaaz,Lara Dutta,1978,25,36
+2004,Khakee,Aishwarya Rai,1973,31,37
+2004,Police Force,Raveena Tandon,1974,30,37
+2004,Aan,Lara Dutta,1978,26,37
+2004,Mujhse Shaadi Karogi,Priyanka Chopra,1982,22,37
+2004,Hatya,Varsha Usgaonkar,1968,36,37
+2004,Aitraaz,Kareena Kapoor,1980,24,37
+2004,Meri Biwi Ka Jawaab Nahin,Sridevi,1963,41,37
+2004,Ab Tumhare Hawale,Esha Deol,1981,23,37
+2005,Insan,Esha Deol,1981,24,38
+2005,Bewafaa,Kareena Kapoor,1980,25,38
+2005,Waqt,Priyanka Chopra,1982,23,38
+2005,Garam Masala,Rimi Sen,1981,24,38
+2005,Deewane Huye Paagal,Rimi Sen,1981,24,38
+2005,Dosti,Kareena Kapoor,1980,25,38
+2006,Family,Bhumika Chawla,1978,28,39
+2006,Mere Jeevan Saathi,Karisma Kapoor,1974,32,39
+2006,Humko Deewana Kar Gaye,Katrina Kaif,1983,23,39
+2006,Phir Hera Pheri,Lara Dutta,1978,28,39
+2006,Jaan-E-Mann,Preity Zinta,1975,31,39
+2006,Bhagam Bhag,Lara Dutta,1978,28,39
+2007,Namastey London,Katrina Kaif,1983,24,40
+2007,Heyy Babyy,Vidya Balan,1979,28,40
+2007,Bhool Bhulaiyaa,Vidya Balan,1979,28,40
+2007,Welcome,Katrina Kaif,1983,24,40
+2008,Tashan,Kareena Kapoor,1980,28,41
+2008,Singh Is Kinng,Katrina Kaif,1983,25,41
+2009,Chandni Chowk to China,Deepika Padukone,1986,23,42
+2009,8 x 10 Tasveer,Ayesha Takia,1986,23,42
+2009,Kambakkht Ishq,Kareena Kapoor,1980,29,42
+2009,Blue,Lara Dutta,1978,31,42
+2009,De Dana Dan,Katrina Kaif,1983,26,42
+2010,Housefull,Deepika Padukone,1986,24,43
+2010,Khatta Meetha,Trisha Krishnan,1983,27,43
+2010,Action Replayy,Aishwarya Rai,1973,37,43
+2010,Tees Maar Khan,Katrina Kaif,1983,27,43
+2011,Patiala House,Anushka Sharma,1988,23,44
+2011,Thank You,Sonam Kapoor,1985,26,44
+2011,Desi Boyz,Deepika Padukone,1986,25,44
+2012,Housefull 2,Asin,1985,27,45
+2012,Rowdy Rathore,Sonakshi Sinha,1987,25,45
+2012,Joker,Sonakshi Sinha,1987,25,45
+2012,Khiladi 786,Asin,1985,27,45
+2013,Special 26,Kajal Aggarwal,1985,28,46
+2013,OUATIMD,Sonakshi Sinha,1987,26,46
+2013,Boss,Aditi Rao Hydari,1986,27,46
+2014,Holiday,Sonakshi Sinha,1987,27,47
+2014,Entertainment,Tamannaah Bhatia,1989,25,47
+2014,The Shaukeens,Lisa Haydon,1986,28,47
+2015,Baby,Taapsee Pannu,1987,28,48
+2015,Gabbar Is Back,Shruti Haasan,1986,29,48
+2015,Brothers,Jacqueline Fernandez,1985,30,48
+2015,Singh Is Bling,Amy Jackson,1992,23,48
+2016,Airlift,Nimrat Kaur,1982,34,49
+2016,Housefull 3,Jacqueline Fernandez,1985,31,49
+2016,Rustom,Ileana D'Cruz,1986,30,49
+2017,Jolly LLB 2,Huma Qureshi,1986,31,50
+2017,Toilet,Bhumi Pednekar,1989,28,50
+2018,Pad Man,Radhika Apte,1985,33,51
+2018,Gold,Mouni Roy,1985,33,51
+2019,Kesari,Parineeti Chopra,1988,31,52
+2019,Mission Mangal,Vidya Balan,1979,40,52
+2019,Housefull 4,Kriti Sanon,1990,29,52
+2019,Good Newwz,Kareena Kapoor,1980,39,52
+2020,Laxmii,Kiara Advani,1992,28,53
+2021,Bell Bottom,Vaani Kapoor,1988,33,54
+2021,Sooryavanshi,Katrina Kaif,1983,38,54
+2021,Atrangi Re,Sara Ali Khan,1995,26,54
+2022,Bachchhan Paandey,Kriti Sanon,1990,32,55
+2022,Samrat Prithviraj,Manushi Chillar,1997,25,55
+2022,Raksha Bandhan,Bhumi Pednekar,1989,33,55
+2022,Cuttputlli,Rakul Preet Singh,1990,32,55
+2022,Ram Setu,Nushrratt Bharuccha,1985,37,55
+2023,Selfiee,Diana Penty,1985,38,56
+2023,OMG 2,Yami Gautam,1988,35,56
+2024,Bade Miyan Chote Miyan,Manushi Chillar,1997,27,57
+2024,Sarfira,Radhika Madan,1995,29,57
+2024,Khel Khel Mein,Taapsee Pannu,1987,37,57
+2024,Singham Again,Deepika Padukone,1986,38,57
+2025,Sky Force,Sara Ali Khan,1995,30,58
+2025,Housefull 5,Sonam Bajwa,1989,36,58
+2025,Jolly LLB 3,Huma Qureshi,1986,39,58
+2026,Bhooth Bangla,Wamiqa Gabi,1993,33,59`;
+
+const rows = d3.csvParse(raw, d => ({
+  Year:+d.Year, Title:d.Title, RI:d.RI,
+  RI_Age:d.RI_Age?+d.RI_Age:null,
+  AK_Age:+d.AK_Age
+}));
+
+// Group by year: keep every film (no averaging). One mini-bar per film within the year's slot.
+const filmed = rows.filter(d => d.RI_Age != null);
+const byYear = d3.rollups(filmed,
+  v => ({
+    films: v,
+    ak: v[0].AK_Age,
+    avgRI: d3.mean(v, d=>d.RI_Age)
+  }),
+  d => d.Year
+).map(([year, o]) => ({year, ...o}))
+ .sort((a,b)=>a.year-b.year);
+
+const width = 1000, height = 1000;
+const margin = {top:80, right:60, bottom:70, left:70};
+const innerW = width - margin.left - margin.right;
+const innerH = height - margin.top - margin.bottom;
+
+const svg = d3.select('#chart');
+const g = svg.append('g').attr('transform',`translate(${margin.left},${margin.top})`);
+
+const x = d3.scaleBand()
+  .domain(byYear.map(d=>d.year))
+  .range([0, innerW])
+  .padding(0.22);
+
+const allRIages = byYear.flatMap(d=>d.films.map(f=>f.RI_Age));
+const yMax = Math.max(d3.max(byYear,d=>d.ak), d3.max(allRIages)) + 6;
+const y = d3.scaleLinear()
+  .domain([0, yMax])
+  .range([innerH, 0]);
+
+// gridlines (subtle horizontal only)
+g.append('g')
+  .selectAll('line')
+  .data(y.ticks(10))
+  .join('line')
+  .attr('class','gridline')
+  .attr('x1',0).attr('x2',innerW)
+  .attr('y1',d=>y(d)).attr('y2',d=>y(d));
+
+// y axis
+g.append('g')
+  .attr('class','axis')
+  .call(d3.axisLeft(y).ticks(7).tickSize(0).tickPadding(12))
+  .call(s=>s.select('.domain').remove());
+
+// x axis (years, abbreviated) — every other year, no overlap
+const xVals = byYear.map(d => d.year);
+const xTickVals = xVals.filter(y => y % 2 === 1);
+const xAxis = d3.axisBottom(x)
+  .tickValues(xTickVals)
+  .tickFormat(d => "'" + String(d).slice(-2))
+  .tickSize(0)
+  .tickPadding(12);
+g.append('g')
+  .attr('class','axis')
+  .attr('transform',`translate(0,${innerH})`)
+  .call(xAxis)
+  .call(s=>s.select('.domain').remove());
+
+// one bar per year — average heroine age
+const barsG = g.append('g').attr('class','bars');
+barsG.selectAll('rect')
+  .data(byYear)
+  .join('rect')
+  .attr('class','bar')
+  .attr('x', d => x(d.year))
+  .attr('y', d => y(d.avgRI))
+  .attr('width', x.bandwidth())
+  .attr('height', d => innerH - y(d.avgRI));
+
+barsG.selectAll('text')
+  .data(byYear)
+  .join('text')
+  .attr('class','bar-label')
+  .attr('x', d => x(d.year) + x.bandwidth()/2)
+  .attr('y', d => y(d.avgRI) - 5)
+  .text(d => Math.round(d.avgRI));
+
+// Leo-style smooth line through each year's center (Akshay age)
+const linePts = byYear.map(d => ({
+  cx: x(d.year) + x.bandwidth()/2,
+  yv: d.ak
+}));
+const lineGen = d3.line().x(p=>p.cx).y(p=>y(p.yv));
+g.append('path')
+  .datum(linePts)
+  .attr('class','line')
+  .attr('d',lineGen);
+
+// outlined dots at each year (Leo-style: hollow circles)
+g.append('g')
+  .selectAll('circle')
+  .data(linePts)
+  .join('circle')
+  .attr('class','dot')
+  .attr('cx',p=>p.cx)
+  .attr('cy',p=>y(p.yv))
+  .attr('r',4.5);
+
+// numeric labels above each dot (Leo-style)
+g.append('g')
+  .selectAll('text')
+  .data(byYear)
+  .join('text')
+  .attr('class','line-label')
+  .attr('x',d=>x(d.year)+x.bandwidth()/2)
+  .attr('y',d=>y(d.ak)-10)
+  .text(d => Math.round(d.ak));
+
+// Legend — top-left of the chart area (Leo-style: bar swatch + line+dot swatch)
+const legend = svg.append('g').attr('class','legend')
+  .attr('transform',`translate(${margin.left + 30},${margin.top + 20})`);
+// bar swatch
+legend.append('rect').attr('fill','var(--teal)').attr('x',0).attr('y',0).attr('width',38).attr('height',8);
+legend.append('text').attr('x',50).attr('y',9).text("Average age of heroines romanced that year");
+// line swatch
+legend.append('line').attr('x1',0).attr('x2',38).attr('y1',32).attr('y2',32).attr('stroke','var(--orange)').attr('stroke-width',2.2);
+legend.append('circle').attr('cx',19).attr('cy',32).attr('r',4.5).attr('fill','var(--bg)').attr('stroke','var(--orange)').attr('stroke-width',2);
+legend.append('text').attr('x',50).attr('y',36).text("Akshay's Age");
+
+</script>
+</body>
+</html>
