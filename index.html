@@ -612,11 +612,9 @@
     transition: opacity 0.4s ease;
     padding: 0;
     background: transparent;
-    border: 2px solid #1B5D9F;
+    border: none;
     outline: none;
-    box-shadow:
-      0 12px 24px -10px rgba(0, 0, 0, 0.35),
-      0 2px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
     box-sizing: content-box;
     display: block;
     overflow: hidden;
@@ -1789,6 +1787,16 @@
     margin: 0;
     flex: 0 0 auto;
   }
+  .slide.remake-stat .rs-waffle-caption .rs-cap-remake,
+  .slide.remake-stat .rs-waffle-caption .rs-cap-sequel,
+  .slide.remake-stat .rs-waffle-caption .rs-cap-requel {
+    font-family: "Taprom", "Benguiat", serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .slide.remake-stat .rs-waffle-caption .rs-cap-remake { color: #0f285a; }
+  .slide.remake-stat .rs-waffle-caption .rs-cap-sequel { color: #3876af; }
+  .slide.remake-stat .rs-waffle-caption .rs-cap-requel { color: #4c96c8; }
   .slide.remake-stat .rs-body-row {
     display: flex;
     flex-direction: row;
@@ -1827,11 +1835,7 @@
     gap: var(--gap);
     opacity: 1;
   }
-  /* Waffle hides when mint reveal fires (mint replaces it in the left slot) */
-  .slide.remake-stat:has([data-rs-show="mint"].shown) .rs-waffle {
-    opacity: 0;
-    pointer-events: none;
-  }
+  /* Waffle stays visible even after mint reveal fires. */
 
   /* Right slot — sits right next to the waffle so the ← arrows point at segments.
      Matches the waffle's 78% height so legend items align with the waffle rows.
@@ -1905,9 +1909,9 @@
   .slide.remake-stat .rs-right-slot > .rs-mint-pdf {
     position: absolute;
     top: 50%;
-    left: 180px;
+    left: 260px;
     transform: translateY(-50%);
-    max-width: calc(100% - 180px);
+    max-width: calc(100% - 260px);
     max-height: 130%;
     width: auto;
     height: 130%;
@@ -3718,15 +3722,17 @@
     max-height: 100%;
     object-fit: contain;
   }
-  /* four-1 slide with genre.png overlay revealed on click */
-  .slide.four-1-slide {
-    position: absolute;
-    padding: 0;
-  }
+  /* four-1 slide with genre.png overlay revealed on click.
+     Force the base image to fill the same box the konti-video occupies:
+     both slides share .slide.single-image padding (27px 40px), and we
+     stretch the base img to 100% width/height with object-fit contain. */
   .slide.four-1-slide > img:first-of-type {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
     object-fit: contain;
+    align-self: center;
   }
   .slide.four-1-slide .four-1-overlay {
     position: absolute;
@@ -3845,11 +3851,19 @@
     opacity: 1;
     visibility: visible;
   }
-  .slide.wage-swap:has(.wg-three.shown) .wg-one {
+  .slide.wage-swap:has(.wg-three.shown) .wg-one,
+  .slide.wage-swap:has(.wg-three.shown) .wg-pay {
     opacity: 0;
     visibility: hidden;
   }
-  .slide.wage-swap .wg-one { transition: opacity 0.4s ease; }
+  .slide.wage-swap .wg-one,
+  .slide.wage-swap .wg-pay { transition: opacity 0.4s ease; }
+  .slide.wage-swap .row img.wg-pay {
+    width: 320px;
+    height: auto;
+    max-width: 320px;
+    max-height: 70%;
+  }
 
   /* Nikkei swap: both columns stack images at the same spot; new ones fade in, old ones unmount */
   .slide.nikkei-swap .row { position: relative; }
@@ -4556,17 +4570,16 @@
     font-family: "Benguiat", serif;
   }
   .slide.thanks .thanks-headline {
-    font-family: "Benguiat", serif;
+    font-family: "Taprom", "Benguiat", serif;
     font-weight: 700;
-    font-size: 84px;
+    font-size: 64px;
     color: var(--accent2);
     line-height: 1;
     margin: 0 0 22px 0;
   }
   .slide.thanks .thanks-roll-credits {
-    font-family: "Benguiat", serif;
-    font-style: italic;
-    font-size: 22px;
+    font-family: "Taprom", "Benguiat", serif;
+    font-size: 26px;
     color: var(--accent2);
     line-height: 1.5;
     letter-spacing: 0.04em;
@@ -4603,20 +4616,20 @@
     object-fit: contain;
     transition: opacity 0.45s ease;
   }
-  .slide.thanks .thanks-img-pop {
+  .slide.thanks .thanks-img-stall {
     opacity: 1;
   }
-  .slide.thanks .thanks-img-challenge,
-  .slide.thanks .thanks-img-stall {
+  .slide.thanks .thanks-img-pop,
+  .slide.thanks .thanks-img-challenge {
     opacity: 0;
   }
+  .slide.thanks .thanks-img-pop.r-step.shown { opacity: 1; }
   .slide.thanks .thanks-img-challenge.r-step.shown { opacity: 1; }
-  .slide.thanks .thanks-img-stall.r-step.shown { opacity: 1; }
-  /* When stall is shown, hide pop culture */
-  .slide.thanks:has(.thanks-img-stall.shown) .thanks-img-pop { opacity: 0; }
+  /* When pop is shown, hide the stall */
+  .slide.thanks:has(.thanks-img-pop.shown) .thanks-img-stall { opacity: 0; }
   /* When challenge is shown, hide pop and stall */
-  .slide.thanks:has(.thanks-img-challenge.shown) .thanks-img-pop,
-  .slide.thanks:has(.thanks-img-challenge.shown) .thanks-img-stall { opacity: 0; }
+  .slide.thanks:has(.thanks-img-challenge.shown) .thanks-img-stall,
+  .slide.thanks:has(.thanks-img-challenge.shown) .thanks-img-pop { opacity: 0; }
 
   /* Embedded HTML slide (iframe) — kept for future use */
   .slide.embed {
@@ -5456,7 +5469,7 @@
   </section>
 
   <section class="slide remake-stat" data-reveal>
-    <div class="rs-waffle-caption">One in three ₹100-crore club films was a remake, sequel or requel.</div>
+    <div class="rs-waffle-caption">Every second mega-successful film in the ₹100-crore club has been a <span class="rs-cap-remake">remake</span>, <span class="rs-cap-sequel">sequel</span> or <span class="rs-cap-requel">requel</span>.</div>
 
     <div class="rs-body-row">
     <!-- Left visual slot: waffle -->
@@ -5488,10 +5501,6 @@
       </div>
       <img class="rs-mint-pdf" src="chart-mint-pdf.png" alt="Mint: Bollywood's struggle with original ideas">
     </div>
-    </div>
-
-    <div class="rs-takeaway">
-      <span class="rs-takeaway-line">Every <em>second</em> mega-successful film was a <em>remake, sequel or requel</em>.</span>
     </div>
 
     <!-- Reveal order: highlight waffle categories, then swap waffle → mint chart -->
@@ -5574,6 +5583,7 @@
   <!-- Wage (historical): wage-1 on left, then fade out and reveal wage-3 full-bleed -->
   <section class="slide two-image awm-block wage-swap" data-reveal>
     <div class="row">
+      <img class="wg-pay" src="pay-kareena.png" alt="Kareena Kapoor: Want to be paid equally as male counterpart">
       <img class="wg-one" src="wage-1.png" alt="Wage 1932">
     </div>
     <img class="wg-three r-step" data-step src="wage-3.png" alt="Wage 3">
@@ -5668,17 +5678,13 @@
   <section class="slide thanks" data-reveal>
     <div class="left">
       <div class="thanks-credits">
-        <h1 class="thanks-headline">Thank you</h1>
-        <div class="thanks-roll-credits">Picture abhi baaki hai…</div>
-        <div class="thanks-contact">
-          <div>@surbhaai</div>
-          <div>surbhibhatia.com</div>
-        </div>
+        <h1 class="thanks-headline">Picture abhi baaki hai…</h1>
+        <div class="thanks-contact">surbhibhatia.com / @surbhaai</div>
       </div>
     </div>
     <div class="right">
-      <img class="thanks-img thanks-img-pop" src="day10-popculture.png" alt="Pop culture chart">
-      <img class="thanks-img thanks-img-stall r-step" data-step src="popupstall.png" alt="Chart à la Carte pop-up stall">
+      <img class="thanks-img thanks-img-stall" src="popupstall.png" alt="Chart à la Carte pop-up stall">
+      <img class="thanks-img thanks-img-pop r-step" data-step src="day10-popculture.png" alt="Pop culture chart">
       <img class="thanks-img thanks-img-challenge r-step" data-step src="chart-challenge-grid.png" alt="30 Day Chart Challenge 2026">
     </div>
   </section>
@@ -5817,7 +5823,19 @@
     slides[i].classList.add('active');
     resetReveals(slides[i]);
     updateCounter();
+    try { sessionStorage.setItem('vc-slide-idx', String(i)); } catch (_) {}
   }
+
+  // Restore last-viewed slide if the tab was reloaded (browser can discard
+  // backgrounded tabs, which would otherwise dump the user back on the title).
+  try {
+    const saved = parseInt(sessionStorage.getItem('vc-slide-idx'), 10);
+    if (!isNaN(saved) && saved > 0 && saved < slides.length) {
+      slides[0].classList.remove('active');
+      i = saved;
+      slides[i].classList.add('active');
+    }
+  } catch (_) {}
   updateCounter();
   document.getElementById('navPrev').addEventListener('click', prev);
   document.getElementById('navNext').addEventListener('click', next);
@@ -7011,6 +7029,16 @@
           .attr('dominant-baseline', 'middle')
           .text(d => d);
 
+      // Determine which parts are visible right now so newly drawn bubbles
+      // start at the correct opacity (avoids a flash of all-parts on load).
+      const visibleParts = new Set(['Original']);
+      const slideEl = svg.closest('.slide');
+      if (slideEl) {
+        slideEl.querySelectorAll('.r-step[data-rr-part]').forEach(el => {
+          if (el.classList.contains('shown')) visibleParts.add(el.dataset.rrPart);
+        });
+      }
+
       // Bubbles
       const cellG = g.append('g').attr('class', 'rr-cells');
       rowsRaw.forEach(rec => {
@@ -7019,6 +7047,7 @@
         const cy = yRow(rec.franchise) + yRow.bandwidth() / 2;
         const isLoss = rec.roi < 0;
         const r = rScale(Math.abs(rec.roi));
+        const startOpacity = visibleParts.has(rec.category) ? 1 : 0;
 
         cellG.append('circle')
           .attr('class', `rr-cell rr-bubble`)
@@ -7027,7 +7056,8 @@
           .attr('fill', isLoss ? lossColor : profitColor)
           .attr('fill-opacity', 0.78)
           .attr('stroke', isLoss ? lossColor : profitColor)
-          .attr('stroke-width', 1);
+          .attr('stroke-width', 1)
+          .style('opacity', startOpacity);
 
         cellG.append('text')
           .attr('class', 'rr-value')
@@ -7037,11 +7067,10 @@
           .attr('dominant-baseline', 'middle')
           .attr('font-size', r >= 18 ? 12 : 10)
           .attr('font-weight', 700)
-          .attr('fill', r >= 14 ? '#ffffff' : '#1a1a1a')
+          .attr('fill', '#ffffff')
+          .style('opacity', startOpacity)
           .text(Math.round(rec.roi));
       });
-
-      applyVisibility();
     }
 
     // Show only the Parts whose r-steps have fired (Part 1 always visible).

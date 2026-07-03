@@ -244,13 +244,13 @@ window.remake100crPosters = [
     "title": "Bahubali - The Beginning",
     "year": 2015,
     "category": "franchise",
-    "file": null
+    "file": "leftover-posters/baahubali-baginning.jpg"
   },
   {
     "title": "ABCD - Any Body Can Dance - 2",
     "year": 2015,
     "category": "franchise",
-    "file": null
+    "file": "leftover-posters/abcd2.jpeg"
   },
   {
     "title": "Dangal",
@@ -304,7 +304,7 @@ window.remake100crPosters = [
     "title": "Baahubali 2 - The Conclusion",
     "year": 2017,
     "category": "franchise",
-    "file": null
+    "file": "leftover-posters/baahubali-2.jpeg"
   },
   {
     "title": "Tiger Zinda Hai",
@@ -346,7 +346,7 @@ window.remake100crPosters = [
     "title": "Jolly LLB 2",
     "year": 2017,
     "category": "franchise",
-    "file": null
+    "file": "leftover-posters/jolly-llb-2.jpeg"
   },
   {
     "title": "Badrinath Ki Dulhania",
@@ -382,7 +382,7 @@ window.remake100crPosters = [
     "title": "2",
     "year": 2018,
     "category": "franchise",
-    "file": null
+    "file": "leftover-posters/2.webp"
   },
   {
     "title": "Race 3",
@@ -412,31 +412,31 @@ window.remake100crPosters = [
     "title": "Stree",
     "year": 2018,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/stree.webp"
   },
   {
     "title": "Raazi",
     "year": 2018,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/raazi.jpg"
   },
   {
     "title": "Sonu Ke Titu Ki Sweety",
     "year": 2018,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/sonu-ke-titu-ki-sweety.jpg"
   },
   {
     "title": "Gold",
     "year": 2018,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/gold.jpg"
   },
   {
     "title": "Raid",
     "year": 2018,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/raid.jpg"
   },
   {
     "title": "War",
@@ -484,25 +484,25 @@ window.remake100crPosters = [
     "title": "Kesari",
     "year": 2019,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/kesari.jpg"
   },
   {
     "title": "Total Dhamaal",
     "year": 2019,
     "category": "both",
-    "file": null
+    "file": "leftover-posters/total-dhamaal.jpeg"
   },
   {
     "title": "Chhichhore",
     "year": 2019,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/chichore.jpg"
   },
   {
     "title": "Super 30",
     "year": 2019,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/super30.jpeg"
   },
   {
     "title": "Dabangg 3",
@@ -520,7 +520,7 @@ window.remake100crPosters = [
     "title": "Dream Girl",
     "year": 2019,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/dream-girl.jpg"
   },
   {
     "title": "Gully Boy",
@@ -532,19 +532,19 @@ window.remake100crPosters = [
     "title": "Bala",
     "year": 2019,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/bala.jpeg"
   },
   {
     "title": "De De Pyaar De",
     "year": 2019,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/de-de-pyaar-de.jpeg"
   },
   {
     "title": "Tanhaji - The Unsung Warrior",
     "year": 2020,
     "category": "original",
-    "file": null
+    "file": "leftover-posters/tanhaji.jpeg"
   },
   {
     "title": "Sooryavanshi",
@@ -562,19 +562,19 @@ window.remake100crPosters = [
     "title": "Pushpa: The Rise - Part 1",
     "year": 2021,
     "category": "franchise",
-    "file": null
+    "file": "leftover-posters/pushpa-the-rise-part1.jpeg"
   },
   {
     "title": "K.G.F - Chapter 2",
     "year": 2022,
     "category": "franchise",
-    "file": null
+    "file": "leftover-posters/kgf-2.jpg"
   },
   {
     "title": "RRR",
     "year": 2022,
     "category": "franchise",
-    "file": null
+    "file": "leftover-posters/rrr.jpg"
   },
   {
     "title": "The Kashmir Files",

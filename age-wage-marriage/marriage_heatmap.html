@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Films around marriage — Bollywood</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #000000;
+    color: #f0f0f0;
+    font-family: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    height: 100%;
+    overflow: hidden;
+  }
+  .wrap {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 24px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #charts {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 24px;
+    overflow: hidden;
+  }
+  .panel {
+    flex: 1 1 50%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .panel-title {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #ffffff;
+    margin: 0 0 18px 0;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .panel-chart {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  .panel-chart svg {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+  }
+  .cell { stroke: #000; stroke-width: 0.5px; shape-rendering: crispEdges; }
+  .row-label { font-size: 26px; fill: #f5f5f5; font-weight: 600; }
+  .axis-bottom text { font-size: 18px; fill: #d0d0d0; font-weight: 500; }
+  .axis-bottom line { stroke: #666; }
+  .axis-bottom path { stroke: #666; }
+  .center-line { stroke: #ffb74d; stroke-width: 5px; shape-rendering: crispEdges; }
+  .center-tag { fill: #ffb74d; font-size: 32px; font-weight: 900; letter-spacing: 3px; }
+  .legend-wrap {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    color: #e0e0e0;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 5;
+  }
+  .legend-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #c0c0c0;
+    letter-spacing: 0.3px;
+  }
+  .legend-row { display: flex; align-items: center; gap: 10px; }
+  .legend-swatches { display: inline-flex; gap: 2px; }
+  .legend-swatches span {
+    display: inline-block;
+    width: 22px;
+    height: 14px;
+  }
+  .legend-scale {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 12px;
+    color: #888;
+  }
+  #step-indicator {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #888;
+  }
+  .tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: #1a1a1a;
+    color: #fff;
+    padding: 10px 13px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity 0.1s;
+    max-width: 320px;
+    z-index: 10;
+    border: 1px solid #333;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  }
+  .tooltip b { color: #ffb74d; }
+  .cell { cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="charts">
+    <div class="panel">
+      <div class="panel-title">Actors</div>
+      <div class="panel-chart" id="chart-men"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Actresses</div>
+      <div class="panel-chart" id="chart-women"></div>
+    </div>
+  </div>
+  <div class="legend-wrap" id="legend"></div>
+</div>
+<div class="tooltip" id="tt"></div>
+
+<script>
+const MARRIAGE = {
+  actresses: [
+    { name: "Saira Banu",           year: 1966 },
+    { name: "Neetu Singh",          year: 1980, displayName: "Neetu Kapoor" },
+    { name: "Madhuri Dixit",        year: 1999 },
+    { name: "Kajol",                year: 1999 },
+    { name: "Karisma Kapoor",       year: 2003 },
+    { name: "Aishwarya Rai",        year: 2007, aliases: ["Aishwarya Rai Bachchan"] },
+    { name: "Kareena Kapoor Khan",  year: 2012, displayName: "Kareena Kapoor" },
+    { name: "Rani Mukherji",        year: 2014, displayName: "Rani Mukerji" },
+    { name: "Deepika Padukone",     year: 2018 },
+    { name: "Katrina Kaif",         year: 2021 },
+    { name: "Alia Bhatt",           year: 2022 },
+    { name: "Anushka Sharma",       year: 2017 }
+  ],
+  actors: [
+    { name: "Dilip Kumar",       year: 1966 },
+    { name: "Rishi Kapoor",      year: 1980 },
+    { name: "Shah Rukh Khan",    year: 1991 },
+    { name: "Ajay Devgn",        year: 1999 },
+    { name: "Hrithik Roshan",    year: 2000 },
+    { name: "Aamir Khan",        year: 2005 },
+    { name: "Saif Ali Khan",     year: 2012 },
+    { name: "Shahid Kapoor",     year: 2015 },
+    { name: "Ranveer Singh",     year: 2018 },
+    { name: "Vicky Kaushal",     year: 2021 },
+    { name: "Ranbir Kapoor",     year: 2022 },
+    { name: "Sidharth Malhotra", year: 2023 }
+  ]
+};
+
+const FILES = {
+  actresses: "actresses.csv",
+  actors: "actors.csv",
+  more: "more-actor-actresses.csv"
+};
+
+Promise.all([
+  d3.csv(FILES.actresses),
+  d3.csv(FILES.actors),
+  d3.csv(FILES.more)
+]).then(([fRows, mRows, moreRows]) => {
+  const countsByActor = {};
+  const filmsByActor = {}; // name -> year -> [titles]
+  const seen = new Set();
+  function ingest(rows, nameKey, titleKey) {
+    rows.forEach(r => {
+      const name = r[nameKey];
+      const yr = +r.Year;
+      const title = (r[titleKey] || "").trim();
+      if (!name || !yr) return;
+      const key = `${name}|${yr}|${title.toLowerCase()}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      if (!countsByActor[name]) countsByActor[name] = {};
+      countsByActor[name][yr] = (countsByActor[name][yr] || 0) + 1;
+      if (!filmsByActor[name]) filmsByActor[name] = {};
+      if (!filmsByActor[name][yr]) filmsByActor[name][yr] = [];
+      filmsByActor[name][yr].push(title || "(untitled)");
+    });
+  }
+  ingest(fRows, "Actor", "Film");
+  ingest(mRows, "Actor", "Film");
+  ingest(moreRows, "Actresss", "Title [ a ]");
+
+  function mergedCounts(d) {
+    const merged = { ...(countsByActor[d.name] || {}) };
+    (d.aliases || []).forEach(alias => {
+      const src = countsByActor[alias] || {};
+      for (const y in src) merged[y] = (merged[y] || 0) + src[y];
+    });
+    return merged;
+  }
+
+  function mergedFilms(d) {
+    const merged = {};
+    const sources = [filmsByActor[d.name] || {}, ...(d.aliases || []).map(a => filmsByActor[a] || {})];
+    sources.forEach(src => {
+      for (const y in src) {
+        if (!merged[y]) merged[y] = [];
+        merged[y] = merged[y].concat(src[y]);
+      }
+    });
+    return merged;
+  }
+
+  function enrich(d) {
+    const counts = mergedCounts(d);
+    const films = mergedFilms(d);
+    const yrs = Object.keys(counts).map(Number);
+    const minOff = yrs.length ? d3.min(yrs) - d.year : 0;
+    const maxOff = yrs.length ? d3.max(yrs) - d.year : 0;
+    const debutYear = yrs.length ? d3.min(yrs) : d.year;
+    return { ...d, counts, films, minOff, maxOff, debutYear };
+  }
+
+  const byDebut = (a, b) => a.debutYear - b.debutYear;
+  const menRows   = MARRIAGE.actors.map(enrich).sort(byDebut);
+  const womenRows = MARRIAGE.actresses.map(enrich).sort(byDebut);
+
+  // shared offset range across both panels so they're directly comparable
+  const allRows = [...menRows, ...womenRows];
+  const globalMin = d3.min(allRows, e => e.minOff);
+  const globalMax = d3.max(allRows, e => e.maxOff);
+  const offsets = d3.range(globalMin, globalMax + 1);
+
+  // shared color scale across panels
+  const maxCount = Math.max(
+    d3.max(allRows, e => d3.max(offsets, off => e.counts[e.year + off] || 0)) || 1,
+    4
+  );
+  // teal → cyan → soft white ramp — clean, modern, high contrast on black
+  // low end is bright enough to read against black for single-film cells
+  const ramp = ["#1a8090", "#28a8a8", "#3fc4b7", "#6ad6c1", "#9ee0c8", "#c5ead4", "#e5f5e1"];
+  const color = d3.scaleQuantize().domain([0.001, maxCount]).range(ramp);
+  const fill = c => c === 0 ? "#0a0a0a" : color(c);
+
+  const tt = d3.select("#tt");
+
+  function cellMouseover(event, c) {
+    if (c.count === 0) return;
+    d3.select(this).attr("stroke", "#ffb74d").attr("stroke-width", 1.5);
+    const offLabel = c.off === 0
+      ? "year of marriage"
+      : (c.off > 0 ? `${c.off} year${c.off === 1 ? "" : "s"} after marriage` : `${-c.off} year${-c.off === 1 ? "" : "s"} before marriage`);
+    const filmList = c.titles.length
+      ? `<div style="margin-top:6px;border-top:1px solid #444;padding-top:6px">` +
+        c.titles.map(t => `• ${t}`).join("<br>") + `</div>`
+      : "";
+    tt.style("opacity", 1)
+      .html(`<b>${c.name}</b><br>${c.year} &nbsp;·&nbsp; ${c.count} film${c.count === 1 ? "" : "s"}<br><span style="opacity:.7">${offLabel}</span>${filmList}`);
+  }
+  function cellMousemove(event) {
+    tt.style("left", (event.pageX + 14) + "px").style("top", (event.pageY - 28) + "px");
+  }
+  function cellMouseout() {
+    d3.select(this).attr("stroke", "none");
+    tt.style("opacity", 0);
+  }
+
+  function drawPanel(containerId, rows, showPost, animatePost) {
+    const cellW = 13;
+    const rowH  = 70;
+    const leftPad = 290;
+    const rightPad = 24;
+    const topPad = 110;
+    const bottomPad = 70;
+
+    const width  = leftPad + cellW * offsets.length + rightPad;
+    const height = topPad + rowH * rows.length + bottomPad;
+
+    d3.select(containerId).selectAll("*").remove();
+    const svg = d3.select(containerId).append("svg")
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("preserveAspectRatio", "xMidYMid meet")
+      .style("background", "#000000");
+
+    const rowG = svg.append("g")
+      .attr("transform", `translate(0, ${topPad})`)
+      .selectAll("g.row")
+      .data(rows)
+      .join("g")
+        .attr("class", "row")
+        .attr("transform", (_, i) => `translate(0, ${i * rowH})`);
+
+    rowG.append("text")
+      .attr("class", "row-label")
+      .attr("x", leftPad - 14)
+      .attr("y", rowH / 2 + 1)
+      .attr("text-anchor", "end")
+      .attr("dominant-baseline", "middle")
+      .text(d => d.displayName || d.name);
+
+    rowG.each(function(d, rowIdx) {
+      const g = d3.select(this);
+      const preOffsets = d3.range(d.minOff, d.maxOff + 1).filter(off => off < 0);
+      const postOffsets = d3.range(d.minOff, d.maxOff + 1).filter(off => off >= 0);
+
+      function makeCellData(off) {
+        const yr = d.year + off;
+        return {
+          off,
+          year: yr,
+          count: d.counts[yr] || 0,
+          titles: d.films[yr] || [],
+          name: d.displayName || d.name,
+          marriageYear: d.year
+        };
+      }
+
+      g.selectAll("rect.pre")
+        .data(preOffsets.map(makeCellData))
+        .join("rect")
+          .attr("class", "cell pre")
+          .attr("x", c => leftPad + (c.off - globalMin) * cellW)
+          .attr("y", 2)
+          .attr("width", cellW - 1)
+          .attr("height", rowH - 4)
+          .attr("fill", c => fill(c.count))
+          .on("mouseover", cellMouseover)
+          .on("mousemove", cellMousemove)
+          .on("mouseout", cellMouseout);
+
+      if (!showPost || postOffsets.length === 0) return;
+
+      const postX = leftPad + (0 - globalMin) * cellW;
+      const postW = postOffsets.length * cellW;
+
+      // draw post cells fully
+      g.selectAll("rect.post")
+        .data(postOffsets.map(makeCellData))
+        .join("rect")
+          .attr("class", "cell post")
+          .attr("x", c => leftPad + (c.off - globalMin) * cellW)
+          .attr("y", 2)
+          .attr("width", cellW - 1)
+          .attr("height", rowH - 4)
+          .attr("fill", c => fill(c.count))
+          .on("mouseover", cellMouseover)
+          .on("mousemove", cellMousemove)
+          .on("mouseout", cellMouseout);
+
+      if (!animatePost) return;
+
+      // black curtain over the post area — shrinks from right→left to reveal cells left→right
+      g.append("rect")
+        .attr("class", "post-curtain")
+        .attr("x", postX)
+        .attr("y", 0)
+        .attr("width", postW + 2)
+        .attr("height", rowH)
+        .attr("fill", "#000000")
+        .transition()
+          .duration(1100)
+          .delay(150 + rowIdx * 30)
+          .ease(d3.easeCubicOut)
+          .attr("x", postX + postW + 2)
+          .attr("width", 0)
+          .remove();
+    });
+
+    // marriage centerline
+    const centerX = leftPad + (0 - globalMin) * cellW + cellW / 2;
+    svg.append("line")
+      .attr("class", "center-line")
+      .attr("x1", centerX)
+      .attr("x2", centerX)
+      .attr("y1", topPad - 12)
+      .attr("y2", topPad + rows.length * rowH + 6);
+
+    svg.append("text")
+      .attr("class", "center-tag")
+      .attr("x", centerX)
+      .attr("y", topPad - 24)
+      .attr("text-anchor", "middle")
+      .text("MARRIAGE");
+
+    // bottom axis
+    const xScale = d3.scaleLinear()
+      .domain([globalMin, globalMax + 1])
+      .range([leftPad, leftPad + offsets.length * cellW]);
+
+    const tickStep = offsets.length > 30 ? 5 : (offsets.length > 15 ? 2 : 1);
+    const ticks = d3.range(Math.ceil(globalMin / tickStep) * tickStep, globalMax + 1, tickStep);
+    if (!ticks.includes(0)) ticks.push(0);
+    ticks.sort((a, b) => a - b);
+
+    svg.append("g")
+      .attr("class", "axis-bottom")
+      .attr("transform", `translate(0, ${topPad + rows.length * rowH + 10})`)
+      .call(d3.axisBottom(xScale).tickValues(ticks).tickFormat(d => d === 0 ? "T" : (d > 0 ? `T+${d}` : `T${d}`)).tickSize(6));
+  }
+
+  // Phases:
+  // 0 = both panels show pre-marriage only
+  // 1 = men's post-marriage cells animate in (women still pre only)
+  // 2 = women's post-marriage cells animate in (men stays as-is)
+  let phase = 0;
+  let prevPhase = -1;
+  const TOTAL_PHASES = 3;
+
+  function render() {
+    const menShowPost   = phase >= 1;
+    const womenShowPost = phase >= 2;
+
+    // animate only the panel that just unlocked its post cells this step
+    const animateMen   = phase === 1 && prevPhase < 1;
+    const animateWomen = phase === 2 && prevPhase < 2;
+
+    drawPanel("#chart-men",   menRows,   menShowPost,   animateMen);
+    drawPanel("#chart-women", womenRows, womenShowPost, animateWomen);
+
+    d3.select("#step-indicator").text(`${phase + 1} / ${TOTAL_PHASES}`);
+    prevPhase = phase;
+  }
+
+  function advance(dir) {
+    phase = Math.max(0, Math.min(TOTAL_PHASES - 1, phase + dir));
+    render();
+  }
+
+  // top-right legend
+  const legend = d3.select("#legend");
+  legend.html("");
+  legend.append("div").attr("class", "legend-title").text("No. of movies released per year");
+  const row = legend.append("div").attr("class", "legend-row");
+  const swatches = row.append("span").attr("class", "legend-swatches");
+  swatches.append("span").style("background", "#0a0a0a").style("border", "1px solid #444");
+  ramp.forEach(c => swatches.append("span").style("background", c));
+  const step = maxCount / ramp.length;
+  const scale = legend.append("div").attr("class", "legend-scale");
+  scale.append("span").text("0");
+  scale.append("span").text(Math.round(step * ramp.length));
+  legend.append("div").attr("id", "step-indicator");
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") { e.preventDefault(); advance(+1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); advance(-1); }
+  });
+  document.addEventListener("click", e => {
+    if (e.target.closest(".cell, .tooltip, .legend-wrap")) return;
+    advance(+1);
+  });
+
+  render();
+}).catch(err => {
+  d3.select("#charts").html(`<div style="color:#c33;padding:20px;">Could not load CSVs. Run a local server (e.g. <code>python3 -m http.server 8910</code>) in this folder, then open <code>http://localhost:8910/marriage_heatmap.html</code>.<br><br><span style="color:#888;font-size:12px;">${err}</span></div>`);
+});
+</script>
+</body>
+</html>

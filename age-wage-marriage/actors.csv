@@ -1,0 +1,365 @@
+Rank,Sno,Actor,Gender,Year,Film,nationalist_sentiments,primary_genre_final
+1,1,Shah Rukh Khan,Male,1992,Deewana,no,Romance
+2,2,Shah Rukh Khan,Male,1992,Chamatkar,no,Fantasy/Sci-Fi/Horror
+3,3,Shah Rukh Khan,Male,1992,Raju Ban Gaya Gentleman,no,Romance
+4,4,Shah Rukh Khan,Male,1992,Dil Aashna Hai,no,Romance
+5,5,Shah Rukh Khan,Male,1993,Maya Memsaab,no,Thriller/Crime
+6,6,Shah Rukh Khan,Male,1993,King Uncle,no,Comedy
+7,7,Shah Rukh Khan,Male,1993,Baazigar,no,Thriller/Crime
+8,8,Shah Rukh Khan,Male,1993,Darr,no,Thriller/Crime
+9,9,Shah Rukh Khan,Male,1994,Kabhi Haan Kabhi Naa,no,Romance
+10,10,Shah Rukh Khan,Male,1994,Anjaam,no,Thriller/Crime
+11,11,Shah Rukh Khan,Male,1995,Karan Arjun,no,Action/Adventure
+12,12,Shah Rukh Khan,Male,1995,Zamaana Deewana,no,Romance
+13,13,Shah Rukh Khan,Male,1995,Guddu,no,Romance
+14,14,Shah Rukh Khan,Male,1995,Oh Darling! Yeh Hai India!,yes,Comedy
+15,15,Shah Rukh Khan,Male,1995,Dilwale Dulhania Le Jayenge,no,Romance
+16,16,Shah Rukh Khan,Male,1995,Ram Jaane,no,Drama/Serious
+17,17,Shah Rukh Khan,Male,1995,Trimurti,no,Action/Adventure
+18,18,Shah Rukh Khan,Male,1996,English Babu Desi Mem,no,Romance
+19,19,Shah Rukh Khan,Male,1996,Chaahat,no,Romance
+20,20,Shah Rukh Khan,Male,1997,Koyla,no,Action/Adventure
+21,21,Shah Rukh Khan,Male,1997,Yes Boss,no,Romance
+22,22,Shah Rukh Khan,Male,1997,Pardes,yes,Romance
+23,23,Shah Rukh Khan,Male,1997,Dil To Pagal Hai,no,Romance
+24,24,Shah Rukh Khan,Male,1998,Duplicate,no,Action/Adventure
+25,25,Shah Rukh Khan,Male,1998,Dil Se..,no,Romance
+26,26,Shah Rukh Khan,Male,1998,Kuch Kuch Hota Hai,no,Romance
+27,27,Shah Rukh Khan,Male,1999,Baadshah,no,Action/Adventure
+28,28,Shah Rukh Khan,Male,2000,Phir Bhi Dil Hai Hindustani,yes,Romance
+29,29,Shah Rukh Khan,Male,2000,Hey Ram,yes,Drama/Serious
+30,30,Shah Rukh Khan,Male,2000,Josh,no,Action/Adventure
+31,31,Shah Rukh Khan,Male,2000,Mohabbatein,no,Romance
+32,32,Shah Rukh Khan,Male,2001,One 2 Ka 4,no,Action/Adventure
+33,33,Shah Rukh Khan,Male,2001,Aśoka,yes,Action/Adventure
+34,34,Shah Rukh Khan,Male,2001,Kabhi Khushi Kabhie Gham...,no,Drama/Serious
+35,35,Shah Rukh Khan,Male,2002,Hum Tumhare Hain Sanam,no,Romance
+36,36,Shah Rukh Khan,Male,2002,Devdas,no,Romance
+37,37,Shah Rukh Khan,Male,2002,Shakti: The Power,no,Thriller/Crime
+38,38,Shah Rukh Khan,Male,2003,Chalte Chalte,no,Romance
+39,39,Shah Rukh Khan,Male,2003,Kal Ho Naa Ho,no,Romance
+40,40,Shah Rukh Khan,Male,2004,Yeh Lamhe Judaai Ke,no,Romance
+41,41,Shah Rukh Khan,Male,2004,Main Hoon Na,yes,Romance
+42,42,Shah Rukh Khan,Male,2004,Veer-Zaara,yes,Romance
+43,43,Shah Rukh Khan,Male,2004,Swades,yes,Drama/Serious
+44,44,Shah Rukh Khan,Male,2005,Paheli,no,Fantasy/Sci-Fi/Horror
+45,45,Shah Rukh Khan,Male,2006,Kabhi Alvida Naa Kehna,no,Romance
+46,46,Shah Rukh Khan,Male,2006,Don: The Chase Begins Again,no,Thriller/Crime
+47,47,Shah Rukh Khan,Male,2007,Chak De! India,yes,Drama/Serious
+48,48,Shah Rukh Khan,Male,2007,Om Shanti Om,no,Romance
+49,49,Shah Rukh Khan,Male,2008,Rab Ne Bana Di Jodi,no,Romance
+50,50,Shah Rukh Khan,Male,2009,Billu,no,Comedy
+51,51,Shah Rukh Khan,Male,2010,My Name Is Khan,yes,Drama/Serious
+52,52,Shah Rukh Khan,Male,2011,Ra.One,no,Fantasy/Sci-Fi/Horror
+53,53,Shah Rukh Khan,Male,2011,Don 2,no,Thriller/Crime
+54,54,Shah Rukh Khan,Male,2012,Jab Tak Hai Jaan,no,Romance
+55,55,Shah Rukh Khan,Male,2013,Chennai Express,no,Action/Adventure
+56,56,Shah Rukh Khan,Male,2014,Happy New Year,no,Comedy
+57,57,Shah Rukh Khan,Male,2015,Dilwale,no,Romance
+58,58,Shah Rukh Khan,Male,2016,Fan,no,Thriller/Crime
+59,59,Shah Rukh Khan,Male,2016,Dear Zindagi,no,Drama/Serious
+60,60,Shah Rukh Khan,Male,2017,Raees,no,Thriller/Crime
+61,61,Shah Rukh Khan,Male,2017,Jab Harry Met Sejal,no,Romance
+62,62,Shah Rukh Khan,Male,2018,Zero,no,Romance
+63,63,Shah Rukh Khan,Male,2023,Pathaan,yes,Action/Adventure
+64,64,Shah Rukh Khan,Male,2023,Jawan,yes,Action/Adventure
+65,65,Shah Rukh Khan,Male,2023,Dunki,no,Drama/Serious
+66,66,Shah Rukh Khan,Male,2026,King,no,Action/Adventure
+67,1,Hrithik Roshan,Male,2000,Kaho Naa... Pyaar Hai,no,Romance
+68,2,Hrithik Roshan,Male,2000,Fiza,no,Drama/Serious
+69,3,Hrithik Roshan,Male,2000,Mission Kashmir,yes,Action/Adventure
+70,4,Hrithik Roshan,Male,2001,Yaadein,no,Drama/Serious
+71,5,Hrithik Roshan,Male,2001,Kabhi Khushi Kabhie Gham...,no,Drama/Serious
+72,6,Hrithik Roshan,Male,2002,Aap Mujhe Achche Lagne Lage,no,Romance
+73,7,Hrithik Roshan,Male,2002,Na Tum Jaano Na Hum,no,Romance
+74,8,Hrithik Roshan,Male,2002,Mujhse Dosti Karoge!,no,Romance
+75,9,Hrithik Roshan,Male,2003,Main Prem Ki Diwani Hoon,no,Romance
+76,10,Hrithik Roshan,Male,2003,Koi... Mil Gaya,no,Fantasy/Sci-Fi/Horror
+77,11,Hrithik Roshan,Male,2004,Lakshya,yes,Drama/Serious
+78,12,Hrithik Roshan,Male,2006,Krrish,no,Fantasy/Sci-Fi/Horror
+79,13,Hrithik Roshan,Male,2006,Dhoom 2,no,Action/Adventure
+80,14,Hrithik Roshan,Male,2008,Jodhaa Akbar,yes,Romance
+81,15,Hrithik Roshan,Male,2010,Kites,no,Romance
+82,16,Hrithik Roshan,Male,2010,Guzaarish,no,Drama/Serious
+83,17,Hrithik Roshan,Male,2011,Zindagi Na Milegi Dobara,no,Drama/Serious
+84,18,Hrithik Roshan,Male,2012,Agneepath,no,Action/Adventure
+85,19,Hrithik Roshan,Male,2013,Krrish 3,no,Fantasy/Sci-Fi/Horror
+86,20,Hrithik Roshan,Male,2014,Bang Bang!,no,Action/Adventure
+87,21,Hrithik Roshan,Male,2016,Mohenjo Daro,yes,Romance
+88,22,Hrithik Roshan,Male,2017,Kaabil,no,Thriller/Crime
+89,23,Hrithik Roshan,Male,2019,Super 30,yes,Drama/Serious
+90,24,Hrithik Roshan,Male,2019,War,yes,Action/Adventure
+91,25,Hrithik Roshan,Male,2022,Vikram Vedha,no,Thriller/Crime
+92,26,Hrithik Roshan,Male,2024,Fighter,yes,Action/Adventure
+93,27,Hrithik Roshan,Male,2025,War 2,yes,Action/Adventure
+94,1,Vicky Kaushal,Male,2015,Masaan,no,Drama/Serious
+95,2,Vicky Kaushal,Male,2016,Zubaan,no,Drama/Serious
+96,3,Vicky Kaushal,Male,2016,Raman Raghav 2.0,no,Thriller/Crime
+97,4,Vicky Kaushal,Male,2018,Love per Square Foot,no,Romance
+98,5,Vicky Kaushal,Male,2018,Raazi,yes,Thriller/Crime
+99,6,Vicky Kaushal,Male,2018,Lust Stories,no,Romance
+100,7,Vicky Kaushal,Male,2018,Sanju,no,Drama/Serious
+101,8,Vicky Kaushal,Male,2018,Manmarziyaan,no,Romance
+102,9,Vicky Kaushal,Male,2019,Uri: The Surgical Strike,yes,Action/Adventure
+103,10,Vicky Kaushal,Male,2020,Bhoot – Part One: The Haunted Ship,no,Fantasy/Sci-Fi/Horror
+104,11,Vicky Kaushal,Male,2021,Sardar Udham,yes,Drama/Serious
+105,12,Vicky Kaushal,Male,2022,Govinda Naam Mera,no,Comedy
+106,13,Vicky Kaushal,Male,2023,Zara Hatke Zara Bachke,no,Romance
+107,14,Vicky Kaushal,Male,2023,The Great Indian Family,yes,Comedy
+108,15,Vicky Kaushal,Male,2023,Sam Bahadur,yes,Drama/Serious
+109,16,Vicky Kaushal,Male,2024,Bad Newz,no,Comedy
+110,17,Vicky Kaushal,Male,2025,Chhaava,yes,Action/Adventure
+111,1,Salman Khan,Male,1989,Maine Pyar Kiya,no,Romance
+112,2,Salman Khan,Male,1990,Baaghi,no,Action/Adventure
+113,3,Salman Khan,Male,1991,Sanam Bewafa,no,Romance
+114,4,Salman Khan,Male,1991,Patthar Ke Phool,no,Romance
+115,5,Salman Khan,Male,1991,Kurbaan,no,Action/Adventure
+116,6,Salman Khan,Male,1991,Saajan,no,Romance
+117,7,Salman Khan,Male,1991,Love,no,Romance
+118,8,Salman Khan,Male,1992,Suryavanshi,no,Action/Adventure
+119,9,Salman Khan,Male,1992,Jaagruti,no,Action/Adventure
+120,10,Salman Khan,Male,1992,Nishchaiy,no,Action/Adventure
+121,11,Salman Khan,Male,1992,Ek Ladka Ek Ladki,no,Romance
+122,12,Salman Khan,Male,1993,Chandra Mukhi,no,Fantasy/Sci-Fi/Horror
+123,13,Salman Khan,Male,1993,Dil Tera Aashiq,no,Romance
+124,14,Salman Khan,Male,1994,Hum Aapke Hain Koun..!,no,Romance
+125,15,Salman Khan,Male,1994,Chaand Kaa Tukdaa,no,Romance
+126,16,Salman Khan,Male,1994,Andaz Apna Apna,no,Comedy
+127,17,Salman Khan,Male,1994,Sangdil Sanam,no,Romance
+128,18,Salman Khan,Male,1995,Karan Arjun,no,Action/Adventure
+129,19,Salman Khan,Male,1995,Veergati,no,Action/Adventure
+130,20,Salman Khan,Male,1996,Majhdhaar,no,Romance
+131,21,Salman Khan,Male,1996,Khamoshi: The Musical,no,Romance
+132,22,Salman Khan,Male,1996,Jeet,no,Romance
+133,23,Salman Khan,Male,1997,Judwaa,no,Action/Adventure
+134,24,Salman Khan,Male,1997,Auzaar,no,Action/Adventure
+135,25,Salman Khan,Male,1998,Pyaar Kiya To Darna Kya,no,Romance
+136,26,Salman Khan,Male,1998,Jab Pyaar Kisise Hota Hai,no,Romance
+137,27,Salman Khan,Male,1998,Bandhan,no,Drama/Serious
+138,28,Salman Khan,Male,1998,Kuch Kuch Hota Hai,no,Romance
+139,29,Salman Khan,Male,1999,Jaanam Samjha Karo,no,Romance
+140,30,Salman Khan,Male,1999,Biwi No.1,no,Romance
+141,31,Salman Khan,Male,1999,Hum Dil De Chuke Sanam,no,Romance
+142,32,Salman Khan,Male,1999,Hello Brother,no,Comedy
+143,33,Salman Khan,Male,1999,Hum Saath-Saath Hain,no,Drama/Serious
+144,34,Salman Khan,Male,2000,Dulhan Hum Le Jayenge,no,Romance
+145,35,Salman Khan,Male,2000,Chal Mere Bhai,no,Comedy
+146,36,Salman Khan,Male,2000,Har Dil Jo Pyar Karega,no,Romance
+147,37,Salman Khan,Male,2000,Kahin Pyaar Na Ho Jaaye,no,Romance
+148,38,Salman Khan,Male,2001,Chori Chori Chupke Chupke,no,Drama/Serious
+149,39,Salman Khan,Male,2002,Tumko Na Bhool Paayenge,no,Thriller/Crime
+150,40,Salman Khan,Male,2002,Hum Tumhare Hain Sanam,no,Romance
+151,41,Salman Khan,Male,2002,Yeh Hai Jalwa,no,Romance
+152,42,Salman Khan,Male,2003,Tere Naam,no,Romance
+153,43,Salman Khan,Male,2003,Baghban,no,Drama/Serious
+154,44,Salman Khan,Male,2004,Garv: Pride & Honour,yes,Action/Adventure
+155,45,Salman Khan,Male,2004,Mujhse Shaadi Karogi,no,Romance
+156,46,Salman Khan,Male,2004,Phir Milenge,no,Romance
+157,47,Salman Khan,Male,2004,Dil Ne Jise Apna Kahaa,no,Romance
+158,48,Salman Khan,Male,2005,Lucky: No Time for Love,no,Romance
+159,49,Salman Khan,Male,2005,Maine Pyaar Kyun Kiya?,no,Romance
+160,50,Salman Khan,Male,2005,No Entry,no,Comedy
+161,51,Salman Khan,Male,2005,Kyon Ki,no,Romance
+162,52,Salman Khan,Male,2006,Shaadi Karke Phas Gaya Yaar,no,Romance
+163,53,Salman Khan,Male,2006,Baabul,no,Drama/Serious
+164,54,Salman Khan,Male,2006,Jaan-E-Mann,no,Romance
+165,55,Salman Khan,Male,2007,Salaam-e-Ishq,no,Romance
+166,56,Salman Khan,Male,2007,Partner,no,Comedy
+167,57,Salman Khan,Male,2007,Marigold,no,Romance
+168,58,Salman Khan,Male,2007,Saawariya,no,Romance
+169,59,Salman Khan,Male,2008,God Tussi Great Ho,no,Fantasy/Sci-Fi/Horror
+170,60,Salman Khan,Male,2008,Heroes,yes,Drama/Serious
+171,61,Salman Khan,Male,2008,Yuvvraaj,no,Drama/Serious
+172,62,Salman Khan,Male,2009,Wanted,no,Action/Adventure
+173,63,Salman Khan,Male,2009,Main Aurr Mrs Khanna,no,Romance
+174,64,Salman Khan,Male,2009,London Dreams,no,Drama/Serious
+175,65,Salman Khan,Male,2010,Veer,yes,Action/Adventure
+176,66,Salman Khan,Male,2010,Dabangg,no,Action/Adventure
+177,67,Salman Khan,Male,2011,Ready,no,Action/Adventure
+178,68,Salman Khan,Male,2011,Bodyguard,no,Action/Adventure
+179,69,Salman Khan,Male,2012,Ek Tha Tiger,yes,Action/Adventure
+180,70,Salman Khan,Male,2012,Dabangg 2,no,Action/Adventure
+181,71,Salman Khan,Male,2014,Jai Ho,no,Action/Adventure
+182,72,Salman Khan,Male,2014,Kick,no,Action/Adventure
+183,73,Salman Khan,Male,2015,Bajrangi Bhaijaan,yes,Drama/Serious
+184,74,Salman Khan,Male,2015,Prem Ratan Dhan Payo,no,Drama/Serious
+185,75,Salman Khan,Male,2016,Sultan,no,Drama/Serious
+186,76,Salman Khan,Male,2017,Tubelight,yes,Drama/Serious
+187,77,Salman Khan,Male,2018,Race 3,no,Thriller/Crime
+188,78,Salman Khan,Male,2019,Bharat,yes,Drama/Serious
+189,79,Salman Khan,Male,2019,Dabangg 3,no,Action/Adventure
+190,80,Salman Khan,Male,2021,Radhe,no,Action/Adventure
+191,81,Salman Khan,Male,2021,Antim,no,Action/Adventure
+192,82,Salman Khan,Male,2023,Kisi Ka Bhai Kisi Ki Jaan,no,Action/Adventure
+193,83,Salman Khan,Male,2023,Tiger 3,yes,Action/Adventure
+194,84,Salman Khan,Male,2025,Sikandar,no,Action/Adventure
+195,1,Aamir Khan,Male,1988,Qayamat Se Qayamat Tak,no,Romance
+196,2,Aamir Khan,Male,1989,Raakh,no,Thriller/Crime
+197,3,Aamir Khan,Male,1989,Love Love Love,no,Romance
+198,4,Aamir Khan,Male,1990,Awwal Number,no,Action/Adventure
+199,5,Aamir Khan,Male,1990,Tum Mere Ho,no,Romance
+200,6,Aamir Khan,Male,1990,Dil,no,Romance
+201,7,Aamir Khan,Male,1990,Deewana Mujh Sa Nahin,no,Romance
+202,8,Aamir Khan,Male,1990,Jawani Zindabad,no,Drama/Serious
+203,9,Aamir Khan,Male,1991,Afsana Pyaar Ka,no,Romance
+204,10,Aamir Khan,Male,1991,Dil Hai Ke Manta Nahin,no,Romance
+205,11,Aamir Khan,Male,1992,Daulat Ki Jung,no,Action/Adventure
+206,12,Aamir Khan,Male,1992,Jo Jeeta Wohi Sikandar,no,Drama/Serious
+207,13,Aamir Khan,Male,1992,Isi Ka Naam Zindagi,no,Drama/Serious
+208,14,Aamir Khan,Male,1993,Parampara,no,Drama/Serious
+209,15,Aamir Khan,Male,1993,Hum Hain Rahi Pyar Ke,no,Romance
+210,16,Aamir Khan,Male,1994,Andaz Apna Apna,no,Comedy
+211,17,Aamir Khan,Male,1995,Baazi,no,Thriller/Crime
+212,18,Aamir Khan,Male,1995,Aatank Hi Aatank,no,Action/Adventure
+213,19,Aamir Khan,Male,1995,Rangeela,no,Romance
+214,20,Aamir Khan,Male,1995,Akele Hum Akele Tum,no,Romance
+215,21,Aamir Khan,Male,1996,Raja Hindustani,no,Romance
+216,22,Aamir Khan,Male,1997,Ishq,no,Romance
+217,23,Aamir Khan,Male,1998,Ghulam,no,Action/Adventure
+218,24,Aamir Khan,Male,1998,Earth,yes,Drama/Serious
+219,25,Aamir Khan,Male,1999,Sarfarosh,yes,Action/Adventure
+220,26,Aamir Khan,Male,1999,Mann,no,Romance
+221,27,Aamir Khan,Male,2000,Mela,no,Action/Adventure
+222,28,Aamir Khan,Male,2001,Lagaan,yes,Drama/Serious
+223,29,Aamir Khan,Male,2001,Dil Chahta Hai,no,Drama/Serious
+224,30,Aamir Khan,Male,2006,Rang De Basanti,yes,Drama/Serious
+225,31,Aamir Khan,Male,2006,Fanaa,yes,Romance
+226,32,Aamir Khan,Male,2007,Taare Zameen Par,no,Drama/Serious
+227,33,Aamir Khan,Male,2008,Ghajini,no,Thriller/Crime
+228,34,Aamir Khan,Male,2009,3 Idiots,no,Comedy
+229,35,Aamir Khan,Male,2012,Talaash: The Answer Lies Within,no,Thriller/Crime
+230,36,Aamir Khan,Male,2013,Dhoom 3,no,Action/Adventure
+231,37,Aamir Khan,Male,2014,PK,no,Comedy
+232,38,Aamir Khan,Male,2016,Dangal,yes,Drama/Serious
+233,39,Aamir Khan,Male,2017,Secret Superstar,no,Drama/Serious
+234,40,Aamir Khan,Male,2018,Thugs of Hindostan,yes,Action/Adventure
+235,41,Aamir Khan,Male,2022,Laal Singh Chaddha,no,Drama/Serious
+236,42,Aamir Khan,Male,2025,Sitaare Zameen Par,no,Drama/Serious
+237,1,Ranbir Kapoor,Male,2007,Saawariya,no,Romance
+238,2,Ranbir Kapoor,Male,2008,Bachna Ae Haseeno,no,Romance
+239,3,Ranbir Kapoor,Male,2009,Wake Up Sid,no,Drama/Serious
+240,4,Ranbir Kapoor,Male,2009,Ajab Prem Ki Ghazab Kahani,no,Romance
+241,5,Ranbir Kapoor,Male,2009,Rocket Singh: Salesman of the Year,no,Comedy
+242,6,Ranbir Kapoor,Male,2010,Raajneeti,no,Drama/Serious
+243,7,Ranbir Kapoor,Male,2010,Anjaana Anjaani,no,Romance
+244,8,Ranbir Kapoor,Male,2011,Rockstar,no,Romance
+245,9,Ranbir Kapoor,Male,2012,Barfi!,no,Romance
+246,10,Ranbir Kapoor,Male,2013,Yeh Jawaani Hai Deewani,no,Romance
+247,11,Ranbir Kapoor,Male,2013,Besharam,no,Comedy
+248,12,Ranbir Kapoor,Male,2015,Roy,no,Romance
+249,13,Ranbir Kapoor,Male,2015,Bombay Velvet,no,Thriller/Crime
+250,14,Ranbir Kapoor,Male,2015,Tamasha,no,Romance
+251,15,Ranbir Kapoor,Male,2016,Ae Dil Hai Mushkil,no,Romance
+252,16,Ranbir Kapoor,Male,2017,Jagga Jasoos,no,Fantasy/Sci-Fi/Horror
+253,17,Ranbir Kapoor,Male,2018,Sanju,no,Drama/Serious
+254,18,Ranbir Kapoor,Male,2022,Shamshera,yes,Action/Adventure
+255,19,Ranbir Kapoor,Male,2022,Brahmāstra: Part One – Shiva,yes,Fantasy/Sci-Fi/Horror
+256,20,Ranbir Kapoor,Male,2023,Tu Jhoothi Main Makkaar,no,Romance
+257,21,Ranbir Kapoor,Male,2023,Animal,no,Action/Adventure
+258,22,Ranbir Kapoor,Male,2026,Ramayana: Part 1,no,Fantasy/Sci-Fi/Horror
+259,23,Ranbir Kapoor,Male,2027,Ramayana: Part 2,no,Fantasy/Sci-Fi/Horror
+260,1,Ranveer Singh,Male,2010,Band Baaja Baaraat,no,Romance
+261,2,Ranveer Singh,Male,2011,Ladies vs Ricky Bahl,no,Romance
+262,3,Ranveer Singh,Male,2013,Lootera,no,Romance
+263,4,Ranveer Singh,Male,2013,Goliyon Ki Raasleela Ram-Leela,no,Romance
+264,5,Ranveer Singh,Male,2014,Gunday,no,Action/Adventure
+265,6,Ranveer Singh,Male,2014,Kill Dil,no,Action/Adventure
+266,7,Ranveer Singh,Male,2015,Dil Dhadakne Do,no,Drama/Serious
+267,8,Ranveer Singh,Male,2015,Bajirao Mastani,yes,Romance
+268,9,Ranveer Singh,Male,2016,Befikre,no,Romance
+269,10,Ranveer Singh,Male,2018,Padmaavat,yes,Drama/Serious
+270,11,Ranveer Singh,Male,2018,Simmba,no,Action/Adventure
+271,12,Ranveer Singh,Male,2019,Gully Boy,no,Drama/Serious
+272,13,Ranveer Singh,Male,2021,83,yes,Drama/Serious
+273,14,Ranveer Singh,Male,2022,Jayeshbhai Jordaar,no,Drama/Serious
+274,15,Ranveer Singh,Male,2022,Cirkus,no,Comedy
+275,16,Ranveer Singh,Male,2023,Rocky Aur Rani Kii Prem Kahaani,no,Romance
+276,17,Ranveer Singh,Male,2024,Singham Again,yes,Action/Adventure
+277,18,Ranveer Singh,Male,2025,Dhurandhar,no,Action/Adventure
+278,1,Shahid Kapoor,Male,2003,Ishq Vishk,no,Romance
+279,2,Shahid Kapoor,Male,2004,Fida,no,Romance
+280,3,Shahid Kapoor,Male,2004,Dil Maange More,no,Romance
+281,4,Shahid Kapoor,Male,2005,Deewane Huye Paagal,no,Comedy
+282,5,Shahid Kapoor,Male,2005,Vaah! Life Ho Toh Aisi!,no,Fantasy/Sci-Fi/Horror
+283,6,Shahid Kapoor,Male,2005,Shikhar,no,Drama/Serious
+284,7,Shahid Kapoor,Male,2006,36 China Town,no,Thriller/Crime
+285,8,Shahid Kapoor,Male,2006,Chup Chup Ke,no,Comedy
+286,9,Shahid Kapoor,Male,2006,Vivah,no,Romance
+287,10,Shahid Kapoor,Male,2007,Fool & Final,no,Comedy
+288,11,Shahid Kapoor,Male,2007,Jab We Met,no,Romance
+289,12,Shahid Kapoor,Male,2008,Kismat Konnection,no,Romance
+290,13,Shahid Kapoor,Male,2009,Kaminey,no,Thriller/Crime
+291,14,Shahid Kapoor,Male,2009,Dil Bole Hadippa!,no,Romance
+292,15,Shahid Kapoor,Male,2010,Chance Pe Dance,no,Drama/Serious
+293,16,Shahid Kapoor,Male,2010,Paathshaala,no,Drama/Serious
+294,17,Shahid Kapoor,Male,2010,Badmaash Company,no,Thriller/Crime
+295,18,Shahid Kapoor,Male,2010,Milenge Milenge,no,Romance
+296,19,Shahid Kapoor,Male,2011,Mausam,no,Romance
+297,20,Shahid Kapoor,Male,2012,Teri Meri Kahaani,no,Romance
+298,21,Shahid Kapoor,Male,2013,Phata Poster Nikhla Hero,no,Action/Adventure
+299,22,Shahid Kapoor,Male,2013,R... Rajkumar,no,Action/Adventure
+300,23,Shahid Kapoor,Male,2014,Haider,no,Drama/Serious
+301,24,Shahid Kapoor,Male,2015,Shaandaar,no,Romance
+302,25,Shahid Kapoor,Male,2016,Udta Punjab,no,Drama/Serious
+303,26,Shahid Kapoor,Male,2017,Rangoon,no,Romance
+304,27,Shahid Kapoor,Male,2018,Padmaavat,yes,Drama/Serious
+305,28,Shahid Kapoor,Male,2018,Batti Gul Meter Chalu,no,Comedy
+306,29,Shahid Kapoor,Male,2019,Kabir Singh,no,Romance
+307,30,Shahid Kapoor,Male,2022,Jersey,no,Drama/Serious
+308,31,Shahid Kapoor,Male,2023,Bloody Daddy,no,Action/Adventure
+309,32,Shahid Kapoor,Male,2024,Teri Baaton Mein Aisa Uljha Jiya,no,Fantasy/Sci-Fi/Horror
+310,33,Shahid Kapoor,Male,2025,Deva,no,Action/Adventure
+311,1,Sidharth Malhotra,Male,2012,Student of the Year,no,Romance
+312,2,Sidharth Malhotra,Male,2014,Hasee Toh Phasee,no,Romance
+313,3,Sidharth Malhotra,Male,2014,Ek Villain,no,Romance
+314,4,Sidharth Malhotra,Male,2015,Brothers,no,Action/Adventure
+315,5,Sidharth Malhotra,Male,2016,Kapoor & Sons,no,Drama/Serious
+316,6,Sidharth Malhotra,Male,2016,Baar Baar Dekho,no,Romance
+317,7,Sidharth Malhotra,Male,2017,A Gentleman,no,Action/Adventure
+318,8,Sidharth Malhotra,Male,2017,Ittefaq,no,Thriller/Crime
+319,9,Sidharth Malhotra,Male,2018,Aiyaary,yes,Action/Adventure
+320,10,Sidharth Malhotra,Male,2019,Jabariya Jodi,no,Romance
+321,11,Sidharth Malhotra,Male,2019,Marjaavaan,no,Action/Adventure
+322,12,Sidharth Malhotra,Male,2021,Shershaah,yes,Action/Adventure
+323,13,Sidharth Malhotra,Male,2022,Thank God,no,Fantasy/Sci-Fi/Horror
+324,14,Sidharth Malhotra,Male,2023,Mission Majnu,yes,Thriller/Crime
+325,15,Sidharth Malhotra,Male,2024,Yodha,yes,Action/Adventure
+326,16,Sidharth Malhotra,Male,2025,Param Sundari,no,Romance
+327,17,Sidharth Malhotra,Male,2026,Vvan: Force of the Forrest,yes,Thriller/Crime
+328,1,Kartik Aaryan,Male,2011,Pyaar Ka Punchnama,no,Romance
+329,2,Kartik Aaryan,Male,2013,Akaash Vani,no,Romance
+330,3,Kartik Aaryan,Male,2014,Kaanchi: The Unbreakable,no,Drama/Serious
+331,4,Kartik Aaryan,Male,2015,Pyaar Ka Punchnama 2,no,Comedy
+332,5,Kartik Aaryan,Male,2016,Silvat,no,Romance
+333,6,Kartik Aaryan,Male,2017,Guest iin London,no,Comedy
+334,7,Kartik Aaryan,Male,2018,Sonu Ke Titu Ki Sweety,no,Romance
+335,8,Kartik Aaryan,Male,2019,Luka Chuppi,no,Romance
+336,9,Kartik Aaryan,Male,2019,Pati Patni Aur Woh,no,Romance
+337,10,Kartik Aaryan,Male,2020,Love Aaj Kal,no,Romance
+338,11,Kartik Aaryan,Male,2021,Dhamaka,no,Thriller/Crime
+339,12,Kartik Aaryan,Male,2022,Bhool Bhulaiyaa 2,no,Fantasy/Sci-Fi/Horror
+340,13,Kartik Aaryan,Male,2022,Freddy,no,Thriller/Crime
+341,14,Kartik Aaryan,Male,2023,Shehzada,no,Action/Adventure
+342,15,Kartik Aaryan,Male,2023,Satyaprem Ki Katha,no,Romance
+343,16,Kartik Aaryan,Male,2024,Chandu Champion,no,Drama/Serious
+344,17,Kartik Aaryan,Male,2024,Bhool Bhulaiyaa 3,no,Fantasy/Sci-Fi/Horror
+345,1,Varun Dhawan,Male,2012,Student of the Year,no,Romance
+346,2,Varun Dhawan,Male,2014,Main Tera Hero,no,Romance
+347,3,Varun Dhawan,Male,2014,Humpty Sharma Ki Dulhania,no,Romance
+348,4,Varun Dhawan,Male,2015,Badlapur,no,Thriller/Crime
+349,5,Varun Dhawan,Male,2015,ABCD 2,no,Drama/Serious
+350,6,Varun Dhawan,Male,2015,Dilwale,no,Romance
+351,7,Varun Dhawan,Male,2016,Dishoom,no,Action/Adventure
+352,8,Varun Dhawan,Male,2017,Badrinath Ki Dulhania,no,Romance
+353,9,Varun Dhawan,Male,2017,Judwaa 2,no,Comedy
+354,10,Varun Dhawan,Male,2018,October,no,Drama/Serious
+355,11,Varun Dhawan,Male,2018,Sui Dhaaga,no,Drama/Serious
+356,12,Varun Dhawan,Male,2019,Kalank,no,Romance
+357,13,Varun Dhawan,Male,2020,Street Dancer 3D,no,Drama/Serious
+358,14,Varun Dhawan,Male,2020,Coolie No. 1,no,Comedy
+359,15,Varun Dhawan,Male,2022,Jugjugg Jeeyo,no,Drama/Serious
+360,16,Varun Dhawan,Male,2022,Bhediya,no,Fantasy/Sci-Fi/Horror
+361,17,Varun Dhawan,Male,2023,Bawaal,no,Drama/Serious
+362,18,Varun Dhawan,Male,2024,Baby John,no,Action/Adventure
+363,19,Varun Dhawan,Male,2025,Sunny Sanskari Ki Tulsi Kumari,no,Romance
+364,20,Varun Dhawan,Male,2026,Border 2,yes,Action/Adventure
