@@ -5993,6 +5993,45 @@
     if (v.readyState >= 1) seekStart();
   })();
 
+  // ============== VIDEOS RESTART ON SLIDE ACTIVATION ==============
+  // Videos should not be midway when their slide loads — restart each video
+  // from its intended start point every time its slide becomes .active.
+  (function restartVideosOnActivate() {
+    // Map each video to its start offset (seconds). Konti skips the first 4s.
+    const videoStarts = [
+      { sel: '.slide.hall-of-fame .hof-lata video', start: 0 },
+      { sel: '.slide.konti-video video',            start: 4 },
+    ];
+    // Also cover the SRK birthday video and any other inline videos with start 0.
+    document.querySelectorAll('video').forEach(v => {
+      if (!videoStarts.some(x => v.matches(x.sel))) {
+        videoStarts.push({ sel: null, node: v, start: 0 });
+      }
+    });
+
+    function bindSlide(v, start) {
+      const slide = v.closest('.slide');
+      if (!slide) return;
+      function restart() {
+        if (!slide.classList.contains('active')) return;
+        try { v.currentTime = start; } catch (_) {}
+        const p = v.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      }
+      const obs = new MutationObserver(() => {
+        if (slide.classList.contains('active')) restart();
+      });
+      obs.observe(slide, { attributes: true, attributeFilter: ['class'] });
+      // Also handle the initial load if the slide is already active
+      if (slide.classList.contains('active')) restart();
+    }
+
+    videoStarts.forEach(entry => {
+      const v = entry.node || document.querySelector(entry.sel);
+      if (v) bindSlide(v, entry.start);
+    });
+  })();
+
   // ============== STREAMGRAPH SLIDE ==============
   (function setupStreamgraph() {
     const slide = document.getElementById('streamgraphSlide');
@@ -6608,19 +6647,10 @@
     initialBuild();
 
     function restartWipe() {
-      // Reset every per-layer clip to 0 then animate to full width in roll order
-      const rollOrder = ['Urdu', 'Hindi', 'Hinglish', 'English'];
+      // Snap every per-layer clip straight to full width (no animation) so the
+      // streamgraph appears fully drawn the instant slide 2 becomes active.
       layers.forEach((layer, idx) => {
-        svgSel.select(`.sg-clip-rect-${idx}`).interrupt().attr('width', 0);
-      });
-      layers.forEach((layer, idx) => {
-        const orderPos = rollOrder.indexOf(layer.key);
-        svgSel.select(`.sg-clip-rect-${idx}`)
-          .transition()
-          .delay(orderPos * 220)
-          .duration(1500)
-          .ease(d3.easeCubicOut)
-          .attr('width', innerW);
+        svgSel.select(`.sg-clip-rect-${idx}`).interrupt().attr('width', innerW);
       });
       // also reset opacities (in case slide was last left dissolved)
       svgSel.selectAll('.sg-words').remove();
