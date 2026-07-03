@@ -3060,6 +3060,23 @@
   }
   .slide.titled-chart.slope-pair .sp-cap-orig   { color: #1B5D9F; }
   .slide.titled-chart.slope-pair .sp-cap-remake { color: #c12818; }
+  .slide.titled-chart.slope-pair .sp-risk {
+    position: absolute;
+    right: 48px;
+    bottom: 48px;
+    max-width: 320px;
+    max-height: 320px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .slide.titled-chart.slope-pair .sp-risk.r-step.shown {
+    opacity: 1;
+  }
 
   /* D3 dumbbell chart on the "Remakes are not loved at all" slide */
   .slide.titled-chart-d3 {
@@ -5305,7 +5322,7 @@
   <!-- Stat slide: 99 ₹100cr films as a poster waffle, highlight categories step-by-step -->
   <!-- Mapping: where Bollywood's remakes come from (clean 3×2 grid, revealed in order) -->
   <section class="slide remake-pairs" data-reveal>
-    <h2 class="rp-title">Cntrl + C, Cntrl + V</h2>
+    <h2 class="rp-title">RRR: Reuse, Recycle, Remake</h2>
     <div class="rp-grid">
       <figure class="rp-card" style="--lang-color: #ff8b3d">
         <div class="rp-lang">Tamil</div>
@@ -5389,6 +5406,7 @@
       </figure>
     </div>
     <p class="sp-line">South-to-Hindi remakes are <em class="sp-red">less loved</em>, but get <em class="sp-green">more reach</em>.</p>
+    <img class="sp-risk r-step" data-step src="risk.jpg" alt="Risk">
   </section>
 
   <!-- Remake formula: Remake + Sequel = Requel -->
