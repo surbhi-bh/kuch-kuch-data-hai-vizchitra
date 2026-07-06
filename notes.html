@@ -56,29 +56,24 @@
     border-radius: 3px;
   }
 
-  /* Default layout (reveal.js style) */
-  #current-slide {
-    width: 60%;
-    height: 100%;
+  /* Current slide thumbnail on the left (larger), notes on the right */
+  #upcoming-slide {
+    position: absolute;
     top: 0;
     left: 0;
-    padding-right: 0;
+    width: 60%;
+    height: 100%;
+    padding: 12px;
+    box-sizing: border-box;
   }
-
-  #upcoming-slide {
-    width: 40%;
-    height: 40%;
-    right: 0;
-    top: 0;
-  }
-
   #speaker-controls {
-    top: 40%;
+    top: 0;
     right: 0;
     width: 40%;
-    height: 60%;
+    height: 100%;
     overflow: auto;
     font-size: 18px;
+    box-sizing: border-box;
   }
 
   .speaker-controls-time,
@@ -146,8 +141,8 @@
 
   .speaker-controls-notes .value {
     margin-top: 5px;
-    line-height: 1.4;
-    font-size: 1.2em;
+    line-height: 1.5;
+    font-size: 1.6em;
     white-space: pre-wrap;
   }
 
@@ -172,13 +167,8 @@
 </head>
 <body>
 
-<div id="current-slide">
-  <span class="label">Current</span>
-  <div class="slide-frame"><iframe id="nowF"></iframe></div>
-</div>
-
 <div id="upcoming-slide">
-  <span class="label">Upcoming</span>
+  <span class="label">Current</span>
   <div class="slide-frame"><iframe id="nextF"></iframe></div>
 </div>
 
@@ -203,53 +193,127 @@
   const CHANNEL = 'vc-bollywood-notes';
   const BASE = 'index.html';
   const bc = new BroadcastChannel(CHANNEL);
-  const nowF = document.getElementById('nowF');
-  const nextF = document.getElementById('nextF');
   const notesEl = document.getElementById('notesEl');
   const statusEl = document.getElementById('statusEl');
   const clockValue = document.getElementById('clockValue');
   const timerValue = document.getElementById('timerValue');
   const resetTimer = document.getElementById('resetTimer');
+  const nextF = document.getElementById('nextF');
 
-  // Fit each 1280x720 iframe into its parent .slide-frame.
-  function fit(f) {
-    const b = f.parentElement.getBoundingClientRect();
-    if (b.width < 10 || b.height < 10) return;
-    const s = Math.min(b.width / 1280, b.height / 720);
-    f.style.width = '1280px';
-    f.style.height = '720px';
-    f.style.transform = 'scale(' + s + ')';
-    f.style.left = ((b.width - 1280 * s) / 2) + 'px';
-    f.style.top = ((b.height - 720 * s) / 2) + 'px';
+  // Fit the 1280x720 upcoming iframe into its parent .slide-frame.
+  function fitNext() {
+    const parent = nextF.parentElement.getBoundingClientRect();
+    if (parent.width < 10 || parent.height < 10) return;
+    const s = Math.min(parent.width / 1280, parent.height / 720);
+    nextF.style.width = '1280px';
+    nextF.style.height = '720px';
+    nextF.style.border = '0';
+    nextF.style.background = '#fff';
+    nextF.style.transformOrigin = 'top left';
+    nextF.style.position = 'absolute';
+    nextF.style.transform = 'scale(' + s + ')';
+    nextF.style.left = ((parent.width - 1280 * s) / 2) + 'px';
+    nextF.style.top = ((parent.height - 720 * s) / 2) + 'px';
   }
-  function refit() { fit(nowF); fit(nextF); }
-  window.addEventListener('resize', refit);
+  window.addEventListener('resize', fitNext);
+  nextF.addEventListener('load', fitNext);
+  nextF.src = BASE + '?t=' + Date.now() + '#p=0&s=0&r=1';
+  setTimeout(fitNext, 120);
 
-  // Preload with slide 0 so something shows before the main deck responds
-  nowF.src = BASE + '#p=0&r=0';
-  nextF.src = BASE + '#p=1&r=0';
-  setTimeout(refit, 120);
-  nowF.addEventListener('load', refit);
-  nextF.addEventListener('load', refit);
+  // ============================================================
+  // Self-contained speaker view. On every render, read the deck's
+  // current state directly from window.opener (the deck window) —
+  // no messaging, no caching, no races. If there's no opener, fall
+  // back to fetching index.html and tracking a local index.
+  // ============================================================
 
-  bc.addEventListener('message', (ev) => {
-    if (!ev.data || ev.data.type !== 'state') return;
-    const { index, total, notes } = ev.data;
-    statusEl.textContent = (index + 1) + ' / ' + total;
-    notesEl.textContent = notes || '(no notes)';
-    nowF.src = BASE + '#p=' + index + '&r=0';
-    nextF.src = BASE + '#p=' + Math.min(index + 1, total - 1) + '&r=0';
-    setTimeout(refit, 80);
-  });
+  function notesForRaw(raw, shownCount) {
+    if (!raw) return '';
+    if (!raw.includes('|||')) return raw;
+    const rawParts = raw.split(/\|\|\|(@\d+)?/);
+    const segments = [];
+    for (let k = 0; k < rawParts.length; k++) {
+      const chunk = rawParts[k];
+      if (chunk == null) continue;
+      if (/^@\d+$/.test(chunk)) {
+        const t = parseInt(chunk.slice(1), 10);
+        if (segments.length) segments[segments.length - 1].threshold = t;
+        continue;
+      }
+      segments.push({ threshold: segments.length, text: chunk.trim() });
+    }
+    let picked = segments[0];
+    for (const seg of segments) if (shownCount >= seg.threshold) picked = seg;
+    return picked ? picked.text : '';
+  }
 
-  // Ask the main deck for its current state
-  bc.postMessage({ type: 'poll' });
+  // Read deck state directly from window.opener. Returns null if no opener.
+  function readDeckState() {
+    try {
+      if (!window.opener || window.opener.closed) return null;
+      const doc = window.opener.document;
+      const slides = doc.querySelectorAll('.slide');
+      if (!slides.length) return null;
+      let activeIdx = 0;
+      for (let k = 0; k < slides.length; k++) {
+        if (slides[k].classList.contains('active')) { activeIdx = k; break; }
+      }
+      const active = slides[activeIdx];
+      const shownCount = active.querySelectorAll('.r-step.shown').length;
+      const raw = active.getAttribute('data-notes') || '';
+      return { index: activeIdx, step: shownCount, total: slides.length, raw };
+    } catch (_) { return null; }
+  }
 
-  // Arrow keys navigate the main deck
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === ' ') bc.postMessage({ type: 'nav', dir: 'next' });
-    if (e.key === 'ArrowLeft') bc.postMessage({ type: 'nav', dir: 'prev' });
-  });
+  let lastCurrentIdx = -1;
+  let lastCurrentStep = -1;
+  function render() {
+    const s = readDeckState();
+    if (!s) {
+      statusEl.textContent = 'no deck window';
+      notesEl.textContent = 'Open the deck and press S to launch the speaker view.';
+      return;
+    }
+    const text = notesForRaw(s.raw, s.step);
+    notesEl.textContent = text || '(no notes)';
+    statusEl.textContent = (s.index + 1) + ' / ' + s.total + ' • step ' + s.step;
+    if (s.index !== lastCurrentIdx || s.step !== lastCurrentStep) {
+      nextF.src = BASE + '?t=' + Date.now() + '#p=' + s.index + '&s=' + s.step + '&r=1';
+      lastCurrentIdx = s.index;
+      lastCurrentStep = s.step;
+      setTimeout(fitNext, 120);
+    }
+  }
+
+  function sendNav(dir) {
+    let delivered = false;
+    try {
+      if (window.opener && !window.opener.closed) {
+        const fn = dir === 'next' ? window.opener.deckNext : window.opener.deckPrev;
+        if (typeof fn === 'function') { fn(); delivered = true; }
+      }
+    } catch (_) {}
+    // Fallback for when there's no opener (speaker opened by URL, not via S).
+    if (!delivered) {
+      try { localStorage.setItem('vc-nav', dir + ':' + Date.now()); } catch (_) {}
+    }
+    requestAnimationFrame(render);
+    setTimeout(render, 50);
+  }
+
+  function onKey(e) {
+    console.log('[speaker] keydown', e.key);
+    if (e.key === 'ArrowRight' || e.key === ' ') { sendNav('next'); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { sendNav('prev'); e.preventDefault(); }
+  }
+  window.addEventListener('keydown', onKey);
+  window.focus();
+  document.body.addEventListener('click', () => window.focus());
+
+  // Also poll every 500ms so if the user navigates from the deck window,
+  // the notes stay in sync without needing any messaging.
+  setInterval(render, 500);
+  render();
 
   // ============ Clock + Timer ============
   let timerStart = Date.now();

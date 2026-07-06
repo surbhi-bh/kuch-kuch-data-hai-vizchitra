@@ -1,0 +1,5007 @@
+  @font-face {
+    font-family: "Benguiat";
+    src: url("assets/fonts/benguiat-book-bt-58894e1cdcbfd.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: block;
+  }
+  @font-face {
+    font-family: "Benguiat";
+    src: url("assets/fonts/BENGUIAB.TTF") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: block;
+  }
+
+  :root {
+    --bg: #f8f8f8;
+    --ink: #1a1a1a;
+    --accent: #c12818;
+    --accent2: #1f5fae;
+    --muted: rgba(26, 26, 26, 0.55);
+    --rule: rgba(26, 26, 26, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    background: #1a1a1a;
+    color: var(--ink);
+    font-family: "Benguiat", "Georgia", "Times New Roman", serif;
+    overflow: hidden;
+  }
+
+
+  .deck {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  /* 16:9 stage that scales to fit any monitor (letterboxed if needed).
+     All slide content is designed against a 1920x1080 design canvas. */
+  .stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .deck {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    background: var(--bg);
+    transform-origin: center center;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 80px;
+    flex-direction: column;
+    text-align: center;
+    background: var(--bg);
+  }
+
+  .slide.active { display: flex; }
+
+  /* Global footer: surbhibhatia.com (left), Vizchitra wordmark (right) */
+  .deck-footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .deck-footer .footer-handle {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: #5a5a5a;
+    letter-spacing: 0.04em;
+  }
+  .deck-footer .footer-mark {
+    height: 18px;
+    width: auto;
+    opacity: 0.7;
+  }
+  .deck-footer .footer-mark-light { display: none; }
+  /* Dark-slide variant: swap to white logo and lighten the handle text */
+  .deck:has(.slide.awm-block.active) .deck-footer .footer-handle { color: #d8d8d8; }
+  .deck:has(.slide.awm-block.active) .deck-footer .footer-mark-dark { display: none; }
+  .deck:has(.slide.awm-block.active) .deck-footer .footer-mark-light { display: block; opacity: 1; }
+  /* Hide footer on the title slide (has its own branding) */
+  .deck:has(.slide.title.active) .deck-footer { display: none; }
+  /* Hide the website handle on the thank-you slide but keep Vizchitra logo on the right */
+  .deck:has(.slide.thanks.active) .deck-footer .footer-handle { visibility: hidden; }
+
+  /* Title slide — image left, credits right (1920x1080 canvas) */
+  .slide.title { padding: 0; overflow: hidden; }
+
+  .slide.title .left {
+    position: absolute;
+    top: 38%;
+    left: 80px;
+    transform: translateY(-50%);
+    width: 587px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .slide.title .title-img {
+    width: auto;
+    max-width: 100%;
+    height: 320px;
+    object-fit: contain;
+    display: block;
+  }
+  .slide.title .subtitles {
+    margin-top: -8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 18px;
+  }
+  /* Subtitle stack — flat poster blue, soft drop shadow only */
+  .slide.title .subtitle-en,
+  .slide.title .subtitle-hi,
+  .slide.title .subtitle-ur {
+    font-weight: 700;
+    font-size: 40px;
+    color: #1B5D9F;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+  }
+  .slide.title .subtitle-en {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    align-self: center;
+    margin-left: 200px;
+  }
+  .slide.title .subtitle-hi {
+    font-family: "Noto Sans Devanagari", serif;
+    margin-left: 493px;
+  }
+  .slide.title .subtitle-hi .viz { color: #1B5D9F; }
+  .slide.title .subtitle-ur {
+    font-family: "Noto Naskh Arabic", serif;
+    direction: rtl;
+    margin-left: 667px;
+  }
+
+  /* Right column — name + links, bottom-right */
+  .slide.title .right {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  /* Vizchitra logo — top-right of title slide */
+  .slide.title .vc-logo {
+    position: absolute;
+    top: 36px;
+    right: 36px;
+    width: 180px;
+    height: auto;
+  }
+  .slide.title .name-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    align-items: flex-end;
+    margin-bottom: 3px;
+  }
+  .slide.title .name-en {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 25px;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .slide.title .name-hi {
+    font-family: "Noto Sans Devanagari", serif;
+    font-weight: 700;
+    font-size: 25px;
+    color: #1B5D9F;
+    line-height: 1;
+  }
+  .slide.title .name-ur {
+    font-family: "Noto Naskh Arabic", serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--ink);
+    line-height: 1;
+    direction: rtl;
+  }
+  .slide.title .vc-hindi {
+    font-family: "Noto Sans Devanagari", "Benguiat", serif;
+    font-weight: 700;
+    font-size: 21px;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+    margin-bottom: 24px;
+    line-height: 1;
+  }
+  .slide.title .vc-hindi .viz { color: var(--accent); }
+
+  .slide.title .links {
+    font-family: "Benguiat", serif;
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    margin-top: -4px;
+  }
+  .slide.title .links .handle { color: var(--accent2); }
+  .slide.title .links .sep { color: var(--muted); margin: 0 5px; }
+  .slide.title .links .web { color: var(--accent2); }
+
+  /* Generic typography for content slides */
+  .kicker {
+    font-family: "Benguiat", serif;
+    font-size: clamp(0.75rem, 1.1vw, 0.95rem);
+    color: var(--accent);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .slide h1.section {
+    font-family: "Benguiat", serif;
+    font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+    color: var(--ink);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .slide h2.section {
+    font-family: "Benguiat", serif;
+    font-size: clamp(1.6rem, 3.5vw, 3rem);
+    color: var(--ink);
+    margin-bottom: 1.75rem;
+    line-height: 1.15;
+  }
+
+  .slide p.lead {
+    font-family: "Benguiat", serif;
+    font-size: clamp(1rem, 1.8vw, 1.5rem);
+    color: var(--muted);
+    max-width: 60ch;
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+  }
+
+  .pink { color: var(--accent); }
+  .gold { color: var(--accent2); }
+
+  /* Two-image side-by-side slide */
+  .slide.duo {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 19px;
+    padding: 40px 53px;
+  }
+  .slide.duo h2 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 43px;
+    color: var(--ink);
+    text-align: center;
+    line-height: 1.1;
+    margin: 0;
+  }
+  .slide.duo .pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.duo .pair img {
+    max-width: 47%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .slide.duo .source {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.4;
+    max-width: 90%;
+  }
+
+  /* Hello slide */
+  .slide.hello {
+    padding: 40px 53px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+    flex-direction: column;
+    gap: 0;
+  }
+  .slide.hello .heading h1 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 62px;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 9px;
+  }
+  .slide.hello .heading .sub {
+    font-family: "Taprom", "Benguiat", serif;
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--accent2);
+    letter-spacing: 0.04em;
+  }
+  .slide.hello .heading .sub .plus {
+    color: var(--ink);
+    margin: 0 9px;
+    font-weight: 400;
+  }
+
+  /* Hello stripe: override the original 2-column grid for the role row */
+  .slide.hello .stripe {
+    display: flex !important;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 100px 40px 0;
+  }
+  .slide.hello .stripe .role-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 48px;
+    width: 100%;
+    height: 100%;
+    flex-wrap: nowrap;
+  }
+  .slide.hello .stripe .role-cell {
+    flex: 0 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    max-height: 100%;
+  }
+  .slide.hello .stripe .role-cell img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    padding: 6px;
+    background: #f8f8f8;
+    border: 2px solid #1B5D9F;
+    outline: 1px solid rgba(27, 93, 159, 0.25);
+    outline-offset: -8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 12px 24px -10px rgba(0, 0, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+  }
+  .slide.hello .stripe .role {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--accent2);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  /* DM + HR side by side — override the original weekends grid */
+  .slide.hello .weekends-panel {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    grid-template-columns: none !important;
+    padding: 0 40px;
+  }
+  .slide.hello .weekends-panel .dm-hr-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    align-items: center;
+  }
+  .slide.hello .weekends-panel .dm-hr-pair img {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    min-height: 0;
+    display: block;
+  }
+
+  /* Speak-fast wrap with Panvel strike + Yelahanka label */
+  .slide.hello .speak-panel .speak-wrap {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .slide.hello .speak-panel .speak-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+  }
+  /* "Panvel" sits in the image around 64% from left, 60% from top.
+     A red strike-through line and a handwritten "Yelahanka" above it. */
+  .slide.hello .speak-panel .panvel-strike {
+    position: absolute;
+    left: 56%;
+    top: 62%;
+    width: 14%;
+    height: 4px;
+    background: #c12818;
+    transform: rotate(-3deg);
+    transform-origin: left center;
+    pointer-events: none;
+  }
+  .slide.hello .speak-panel .yelahanka-label {
+    position: absolute;
+    left: 56%;
+    top: 50%;
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 26px;
+    color: #c12818;
+    pointer-events: none;
+  }
+
+  /* Stage area below heading. The "stripe" and the "when-panel" share the same slot;
+     when the when-panel reveals, it replaces the stripe. */
+  .slide.hello .stage-area {
+    position: relative;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  /* WEEKDAYS PANEL — 2x2 academia grid on left, QR on right */
+  .slide.hello .stripe {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: flex-start;
+    padding: 100px 40px 0;
+    transition: opacity 0.3s ease;
+  }
+  .slide.hello .stripe.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .slide.hello .stripe .grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+  }
+  .slide.hello .stripe .cell {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    align-items: center;
+  }
+  .slide.hello .stripe .cell img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    max-height: 187px;
+    display: block;
+  }
+  .slide.hello .stripe .cell .tag {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent2);
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+  .slide.hello .stripe .qr-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slide.hello .stripe .qr-cell img {
+    width: 100%;
+    max-width: 293px;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+  }
+
+  /* WEEKENDS PANEL — Mannat big left, Surbhi big right with DM + HR stacked below right */
+  .slide.hello .weekends-panel {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 19px;
+    align-items: stretch;
+    padding: 0 53px;
+    overflow: hidden;
+  }
+  .slide.hello .weekends-panel .mannat {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    min-height: 0;
+  }
+  .slide.hello .weekends-panel .right-stack {
+    display: grid;
+    grid-template-rows: 1.4fr 1fr;
+    gap: 9px;
+    height: 100%;
+    min-height: 0;
+    transition: opacity 0.3s ease;
+  }
+  .slide.hello .weekends-panel .right-stack.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .slide.hello .weekends-panel .right-stack .surbhi {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    min-height: 0;
+  }
+  .slide.hello .weekends-panel .right-stack .pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    min-height: 0;
+  }
+  .slide.hello .weekends-panel .right-stack .pair img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 0;
+  }
+
+  /* SPEAK-FAST PANEL — speak fast on the right half only, never overlapping mannat */
+  .slide.hello .speak-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 53px 0 19px;
+  }
+  .slide.hello .speak-panel img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  /* Speak-fast overlay on the "I have a problem" side of the Why slide — framed, no gap.
+     Frame hugs the image (16:9). Sized so it fits comfortably over the right side. */
+  .slide.why .why-speak-wrap {
+    position: absolute;
+    left: -180px;
+    top: 44%;
+    transform: translateY(-50%);
+    width: 560px;
+    height: auto;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    padding: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    box-sizing: content-box;
+    display: block;
+    overflow: hidden;
+    line-height: 0;
+  }
+  .slide.why .why-speak-wrap.r-step.shown {
+    opacity: 1;
+  }
+  .slide.why .why-right .why-speak-wrap img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    object-fit: fill;
+  }
+  /* When speak-fast appears, the auto stage and the clip stack fade away */
+  .slide.why .why-right:has(.why-speak-wrap.shown) .why-auto-wrap,
+  .slide.why .why-right:has(.why-speak-wrap.shown) .why-clip-stack {
+    opacity: 0;
+  }
+
+  /* Click-to-reveal */
+  .r-step { opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
+  .r-step.shown { opacity: 1; pointer-events: auto; }
+
+  /* Inspiration slide — header on top, image centered below */
+  .slide.inspiration {
+    padding: 32px 53px;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+  }
+  .slide.inspiration .frame {
+    position: relative;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.inspiration .frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+  }
+  .slide.inspiration .frame img.r-step { opacity: 0; pointer-events: none; }
+  .slide.inspiration .frame img.r-step.shown { opacity: 1; }
+  .slide.inspiration .frame img.base { opacity: 1; }
+  .slide.inspiration .frame img.base.hidden { opacity: 0; }
+  .slide.inspiration .caption {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .slide.inspiration .caption h2 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 45px;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .slide.inspiration .caption .source {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* Bollywood Dataviz Hall of Fame — 7-item grid, blue title */
+  .slide.hall-of-fame {
+    padding: 28px 53px 32px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 14px;
+  }
+  .slide.hall-of-fame .hof-title {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 38px;
+    color: #1B5D9F;
+    text-align: left;
+    line-height: 1;
+    margin: 0;
+  }
+  .slide.hall-of-fame .hof-title .hof-fame {
+    font-family: "Taprom", "Benguiat", serif;
+  }
+  .slide.hall-of-fame .hof-cols {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 28px;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .slide.hall-of-fame .hof-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+  }
+  /* Wide column (Lata + IIP live side-by-side inside it) sits in col 2 of the grid */
+  .slide.hall-of-fame .hof-col-wide {
+    grid-column: 2 / 3;
+    grid-row: 1;
+  }
+  .slide.hall-of-fame .hof-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.hall-of-fame .hof-stack figure {
+    margin: 0;
+    padding: 6px;
+    background: #f8f8f8;
+    border: 2px solid #1B5D9F;
+    outline: 1px solid rgba(27, 93, 159, 0.25);
+    outline-offset: -8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 12px 24px -10px rgba(0, 0, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .slide.hall-of-fame .hof-stack figure img,
+  .slide.hall-of-fame .hof-stack figure video {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  /* Lata + iip stage: three-panel row (iip left, lata center, iip-2 right).
+     iip panels overlay the video (stacked z-order) so lata just fades a bit
+     and the two iip images appear on top on the left / right one after the other. */
+  .slide.hall-of-fame .hof-lata-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0;
+    padding: 4px;
+  }
+  .slide.hall-of-fame .hof-lata-stage figure {
+    margin: 0;
+    padding: 6px;
+    background: #f8f8f8;
+    border: 2px solid #1B5D9F;
+    outline: 1px solid rgba(27, 93, 159, 0.25);
+    outline-offset: -8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 12px 24px -10px rgba(0, 0, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+  .slide.hall-of-fame .hof-lata-stage figure img,
+  .slide.hall-of-fame .hof-lata-stage figure video {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  .slide.hall-of-fame .hof-lata-stage .hof-lata {
+    flex: 1 1 auto;
+    height: 100%;
+    transition: opacity 300ms ease;
+  }
+  /* iip panels sit on top of Lata, absolutely positioned in the left / right halves.
+     Frame hugs the image (not stretched full height). They start hidden; on .shown
+     they fade in from that side. */
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-left.r-step,
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-right.r-step {
+    position: absolute;
+    top: 50%;
+    max-height: 90%;
+    width: auto;
+    height: auto;
+    flex: none;
+    opacity: 0;
+    transform: translateY(-50%) translateY(6px);
+    transition: opacity 320ms ease, transform 320ms ease;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-left.r-step {
+    left: 6%;
+  }
+  /* iip-2 sits a bit lower + slightly left of the right edge, and comes in larger */
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-right.r-step {
+    right: 9%;
+    top: 58%;
+  }
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-left.r-step.shown,
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-right.r-step.shown {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+  /* iip figures stack caption on top, image below */
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-left,
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-right {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-cap {
+    font-family: "Benguiat", serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    color: #1B5D9F;
+    text-align: center;
+    line-height: 1.2;
+  }
+  /* iip images render at natural size, capped so both fit either half of the stage */
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-left img {
+    max-width: 360px;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  .slide.hall-of-fame .hof-lata-stage .hof-iip-right img {
+    max-width: 460px;
+    max-height: 480px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  /* When either iip is shown, dim the Lata video underneath */
+  .slide.hall-of-fame .hof-lata-stage:has(.hof-iip-left.shown) .hof-lata,
+  .slide.hall-of-fame .hof-lata-stage:has(.hof-iip-right.shown) .hof-lata {
+    opacity: 0.35;
+  }
+  .slide.hall-of-fame .hof-cap {
+    font-family: "Benguiat", serif;
+    font-style: normal;
+    font-size: 13px;
+    color: #1B5D9F;
+    text-align: center;
+    line-height: 1.35;
+    flex: 0 0 auto;
+  }
+
+  /* Why do I do this? slide */
+  .slide.why {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 40px 53px;
+    gap: 24px;
+    text-align: left;
+  }
+  .slide.why .why-body {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 48px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.why .why-left {
+    flex: 1.4 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .slide.why .why-title {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 38px;
+    color: #1B5D9F;
+    line-height: 1;
+    margin: 0;
+  }
+  .slide.why .venn-wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 60px;
+  }
+  .slide.why .venn-wrap svg {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    max-height: 560px;
+  }
+  .slide.why .venn-wrap .venn-circle {
+    fill-opacity: 0.78;
+    stroke: none;
+  }
+  .slide.why .venn-wrap .venn-center {
+    fill: #f8d62b;
+    stroke: #ffffff;
+    stroke-width: 3;
+  }
+  /* Step reveal — order:
+     1. Watch movies circle (visible from start)
+     2. Work with Data circle
+     3. "It has plots" (movies ∩ data)
+     4. Have fun circle
+     5. "It has popcorn" (movies ∩ fun)
+     6. "You have to play around" (fun ∩ data)
+     7. Yellow center triangle + Bollywood Dataviz label */
+  .slide.why .venn-wrap .venn-step-2,
+  .slide.why .venn-wrap .venn-step-3,
+  .slide.why .venn-wrap .venn-center,
+  .slide.why .venn-wrap .venn-center-label,
+  .slide.why .venn-wrap .venn-pair-label {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .slide.why .why-body:has([data-venn-step="data"].shown) .venn-step-2 {
+    opacity: 1;
+  }
+  .slide.why .why-body:has([data-venn-step="plots"].shown) .venn-pair-plots {
+    opacity: 1;
+  }
+  .slide.why .why-body:has([data-venn-step="fun"].shown) .venn-step-3 {
+    opacity: 1;
+  }
+  .slide.why .why-body:has([data-venn-step="popcorn"].shown) .venn-pair-popcorn {
+    opacity: 1;
+  }
+  .slide.why .why-body:has([data-venn-step="play"].shown) .venn-pair-play {
+    opacity: 1;
+  }
+  .slide.why .why-body:has([data-venn-step="center"].shown) .venn-center,
+  .slide.why .why-body:has([data-venn-step="center"].shown) .venn-center-label {
+    opacity: 1;
+  }
+  /* Right side of Why slide */
+  .slide.why .why-right {
+    position: relative;
+  }
+
+  /* Stage A — auto.png with caption above */
+  .slide.why .why-auto-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 16px;
+    padding-left: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 1;
+  }
+  .slide.why .why-auto-wrap.r-step.shown {
+    opacity: 1;
+  }
+  .slide.why .why-auto-cap {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 18px;
+    color: #1B5D9F;
+    text-align: left;
+    line-height: 1.2;
+    white-space: nowrap;
+    align-self: flex-start;
+    margin-left: -60px;
+  }
+  .slide.why .why-auto-img {
+    max-width: 100%;
+    max-height: 70%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    align-self: flex-start;
+    margin-left: -40px;
+    padding: 6px;
+    background: #f8f8f8;
+    border: 2px solid #1B5D9F;
+    outline: 1px solid rgba(27, 93, 159, 0.25);
+    outline-offset: -8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 12px 24px -10px rgba(0, 0, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+  }
+
+  /* Stage B — framed clippings; appears after auto and hides it. */
+  .slide.why .why-clip-stack {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 12px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 2;
+  }
+  .slide.why .why-clip-stack.r-step.shown {
+    opacity: 1;
+  }
+  .slide.why .why-right:has(.why-clip-stack.shown) .why-auto-wrap {
+    opacity: 0;
+  }
+  .slide.why .why-clip {
+    padding: 6px;
+    background: #f8f8f8;
+    border: 2px solid #1B5D9F;
+    outline: 1px solid rgba(27, 93, 159, 0.25);
+    outline-offset: -8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 12px 24px -10px rgba(0, 0, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    box-sizing: content-box;
+    width: auto;
+    height: auto;
+  }
+  .slide.why .why-clip img {
+    display: block;
+    max-width: 340px;
+    max-height: 240px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  /* Tilt just the first clipping, slightly to the left */
+  .slide.why .why-clip.why-clip-tilt {
+    transform: rotate(-4deg) translateX(-12px);
+  }
+  /* Second clipping (DwjJ3lpWoAAlQoa) hidden until its own r-step */
+  .slide.why .why-clip.r-step { opacity: 0; }
+  .slide.why .why-clip.r-step.shown { opacity: 1; }
+
+  /* "I have a problem" hidden until its own r-step is shown; both stages fade out when it appears */
+  .slide.why [data-problem] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 3;
+  }
+  .slide.why [data-problem].r-step.shown {
+    opacity: 1;
+  }
+  .slide.why .why-right:has([data-problem].shown) .why-auto-wrap,
+  .slide.why .why-right:has([data-problem].shown) .why-clip-stack {
+    opacity: 0;
+  }
+  .slide.why .venn-wrap text {
+    font-family: "Benguiat", serif;
+    fill: #1B5D9F;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+  .slide.why .venn-wrap .venn-set-label {
+    font-family: "Benguiat", serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    fill: #ffffff;
+  }
+  .slide.why .venn-wrap .venn-pair-label {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 22px;
+    fill: #1a1a1a;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+  .slide.why .venn-wrap .venn-center-label {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 18px;
+    fill: #1B5D9F;
+    letter-spacing: 0.02em;
+  }
+  .slide.why .venn-wrap .venn-intro {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 30px;
+    font-weight: 700;
+    fill: #1B5D9F;
+    text-anchor: middle;
+    dominant-baseline: hanging;
+  }
+  .slide.why .why-lead {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 30px;
+    color: #1B5D9F;
+    margin: 0;
+  }
+  .slide.why .why-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-family: "Benguiat", serif;
+    font-size: 20px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .slide.why .why-details li::before {
+    content: "—  ";
+    color: #1B5D9F;
+  }
+  .slide.why .why-details em {
+    color: #1B5D9F;
+    font-style: italic;
+  }
+  .slide.why .why-extras {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .slide.why .why-extras img {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .slide.why .why-extras img.r-step.shown {
+    opacity: 1;
+  }
+  .slide.why .why-right {
+    flex: 0 0 380px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-left: -150px;
+  }
+  .slide.why .why-img-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .slide.why .why-right img {
+    max-width: 380px;
+    max-height: 460px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  .slide.why .why-overlay {
+    position: static;
+    transform: none;
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 22px;
+    color: #1B5D9F;
+    white-space: nowrap;
+    text-shadow: none;
+    pointer-events: none;
+  }
+
+  /* Method + SIMA merged: irritated line on top, SIMA quad on left, sima-0 reveal on right */
+  .slide.method.sima-merged {
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 32px 53px;
+    gap: 18px;
+  }
+  .slide.method.sima-merged h2 {
+    white-space: normal;
+    font-size: 30px;
+    flex: 0 0 auto;
+    text-align: center;
+  }
+  .slide.sima-merged .sm-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: stretch;
+    width: 100%;
+  }
+  .slide.sima-merged .sm-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+    text-align: center;
+    transition: opacity 0.4s ease;
+  }
+  .slide.sima-merged .sm-left.r-step {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .slide.sima-merged .sm-left.r-step.shown {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .slide.sima-merged .sm-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
+    transition: opacity 0.4s ease;
+  }
+  .slide.sima-merged .sm-right.r-step {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .slide.sima-merged .sm-right.r-step.shown {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .slide.sima-merged .sm-right img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .slide.sima-merged .sm-heading {
+    font-family: "Benguiat", serif;
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.2;
+    flex: 0 0 auto;
+    margin-top: 14px;
+  }
+  .slide.sima-merged .sm-heading em {
+    color: #1B5D9F;
+    font-style: italic;
+  }
+  .slide.sima-merged .sm-quad {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .slide.sima-merged .sm-panel {
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slide.sima-merged .sm-panel img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  .slide.sima-merged .sm-source {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 12px;
+    color: #1B5D9F;
+    word-break: break-all;
+    flex: 0 0 auto;
+  }
+
+  /* Methodology slide — single line, no image */
+  .slide.method {
+    padding: 40px 53px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 16px;
+  }
+  .slide.method .kicker {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--accent2);
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+  .slide.method h2 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 37px;
+    color: var(--ink);
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .slide.method h2 em {
+    color: #1B5D9F;
+    font-style: italic;
+  }
+
+  /* "I have a problem" slide — directories.png with caption */
+  .slide.problem-shot {
+    padding: 40px 53px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 21px;
+  }
+  .slide.problem-shot h2 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 40px;
+    color: var(--accent);
+    line-height: 1.1;
+    text-align: center;
+  }
+  .slide.problem-shot img {
+    max-height: 70vh;
+    max-width: 90%;
+    object-fit: contain;
+  }
+
+  /* Playback inspiration slide */
+  .slide.playback {
+    padding: 40px 53px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 21px;
+  }
+  .slide.playback .row {
+    display: flex;
+    gap: 27px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.playback .row img,
+  .slide.playback .row video {
+    max-width: 48%;
+    max-height: 88vh;
+    object-fit: contain;
+  }
+
+  .slide.playback-video {
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+  }
+  .slide.playback-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Sima slide — sima-0 at center, then 4-panel grid reveals around it */
+  .slide.sima {
+    padding: 40px 53px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 16px;
+  }
+  .slide.sima .heading {
+    text-align: center;
+  }
+  .slide.sima h2 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 29px;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .slide.sima h2 em {
+    color: var(--accent);
+    font-style: italic;
+  }
+  .slide.sima .source {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+    word-break: break-all;
+  }
+  .slide.sima .stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  /* The center sima-0 image */
+  .slide.sima .center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+  }
+  .slide.sima .center img {
+    max-height: 100%;
+    max-width: 50%;
+    object-fit: contain;
+  }
+  .slide.sima .center.hidden { opacity: 0; pointer-events: none; }
+
+  /* 2x2 grid of sima 1-4 — fills the stage; each reveal pops in */
+  .slide.sima .quad {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 11px;
+    transition: opacity 0.3s ease;
+  }
+  .slide.sima .quad.hidden { opacity: 0; pointer-events: none; }
+  .slide.sima .quad .panel {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .slide.sima .quad .panel img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* AGE WAGE aur MARRIAGE — film-poster style, blue/black, English left, Hindi right */
+  .slide.awm-title {
+    padding: 110px 53px 0;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: center;
+    background: var(--bg);
+    color: var(--ink);
+    flex-direction: row;
+    gap: 56px;
+  }
+  .slide.awm-title .awm-pop {
+    position: absolute;
+    bottom: 0;
+    height: 46%;
+    width: auto;
+    opacity: 1;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .slide.awm-title .awm-pop-left  { left: 40px; }
+  .slide.awm-title .awm-pop-mona  { right: 290px; bottom: -30px; }
+  .slide.awm-title .awm-pop-right { right: 0; }
+  .slide.awm-title .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .slide.awm-title .word {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 96px;
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: #1B5D9F;
+    text-shadow:
+      4px 4px 0 var(--ink),
+      -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.awm-title .word.middle {
+    color: var(--ink);
+    text-shadow: 4px 4px 0 #1B5D9F, -2px -2px 0 rgba(0,0,0,0.18);
+  }
+  .slide.awm-title .word.right {
+    color: #1B5D9F;
+    text-shadow: 4px 4px 0 var(--ink), -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.awm-title .aur-marriage-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  /* Hindi stack — same film-poster style, devanagari */
+  .slide.awm-title .stack-hindi .hword {
+    font-family: "Noto Sans Devanagari", serif;
+    font-weight: 900;
+    font-size: 96px;
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: #1B5D9F;
+    text-shadow:
+      4px 4px 0 var(--ink),
+      -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.awm-title .stack-hindi .hword.middle {
+    color: var(--ink);
+    text-shadow: 4px 4px 0 #1B5D9F, -2px -2px 0 rgba(0,0,0,0.18);
+  }
+  .slide.awm-title .stack-hindi .hword.right {
+    color: #1B5D9F;
+    text-shadow: 4px 4px 0 var(--ink), -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.awm-title .stack-hindi .hindi-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .slide.awm-title .stack-hindi .hconn {
+    font-family: "Noto Sans Devanagari", serif;
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    margin: -3px 0;
+  }
+  /* Three frustrations slide — one reddit post per step, stacked vertically in center */
+  .slide.frustrations {
+    padding: 28px 53px 32px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 18px;
+  }
+  .slide.frustrations .fr-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .slide.frustrations .fr-source {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--ink);
+    text-align: right;
+    line-height: 1.1;
+    margin: 0;
+  }
+  .slide.frustrations .fr-source em {
+    color: #FF4500;
+    font-style: italic;
+    font-weight: 700;
+  }
+  .slide.frustrations .fr-reddit-column {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 18px;
+    min-height: 0;
+    padding-top: 48px;
+    width: 100%;
+  }
+  .slide.frustrations .fr-row {
+    display: grid;
+    grid-template-columns: 656px 1fr 260px;
+    column-gap: 32px;
+    align-items: center;
+    width: 100%;
+  }
+  .slide.frustrations .fr-row > .fr-reddit-post {
+    grid-column: 1;
+    justify-self: start;
+  }
+  .slide.frustrations .fr-row > .fr-row-logo {
+    grid-column: 3;
+    justify-self: end;
+  }
+  .slide.frustrations .fr-reddit-post {
+    display: block;
+    width: 620px;
+    height: 140px;
+    min-width: 620px;
+    min-height: 140px;
+    max-width: 620px;
+    max-height: 140px;
+    object-fit: contain;
+    object-position: center;
+    flex: 0 0 620px;
+    padding: 6px;
+    background: #f8f8f8;
+    border: 2px solid #1B5D9F;
+    outline: 1px solid rgba(27, 93, 159, 0.25);
+    outline-offset: -8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 12px 24px -10px rgba(0, 0, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    box-sizing: content-box;
+  }
+  .slide.frustrations .fr-row-logo {
+    display: block;
+    width: auto;
+    height: 78px;
+    max-width: 220px;
+    object-fit: contain;
+    flex: 0 0 auto;
+  }
+  .slide.frustrations .fr-row-logo.fr-logo-mint {
+    height: 110px;
+    max-width: 260px;
+  }
+  .slide.frustrations .fr-row-logo.fr-logo-nikkei {
+    height: 68px;
+  }
+  .slide.frustrations .fr-row-logo.fr-logo-konti {
+    height: 82px;
+  }
+  .slide.frustrations .fr-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 28px;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .slide.frustrations .fr-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    align-items: center;
+    padding: 18px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .slide.frustrations .fr-label {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--ink);
+    text-align: center;
+    flex: 0 0 auto;
+    line-height: 1.15;
+  }
+  .slide.frustrations .fr-logo {
+    width: auto;
+    object-fit: contain;
+    display: block;
+    flex: 0 0 auto;
+    margin-top: 8px;
+  }
+  .slide.frustrations .fr-logo-mint { height: 96px; }
+  .slide.frustrations .fr-logo-nikkei { height: 52px; }
+  .slide.frustrations .fr-logo-konti { height: 36px; }
+  .slide.frustrations .fr-reddit {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .slide.frustrations .fr-reddit-single img {
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  /* Women in Bollywood — three reddit images stacked tight as one block, zoomed in */
+  .slide.frustrations .fr-reddit-stack {
+    flex-direction: column;
+    gap: 0;
+    align-items: stretch;
+    overflow: hidden;
+  }
+  .slide.frustrations .fr-reddit-stack img {
+    width: 100%;
+    flex: 1 1 0;
+    min-height: 0;
+    object-fit: cover;
+    object-position: center top;
+    transform: scale(1.4);
+    transform-origin: top center;
+    display: block;
+  }
+  /* Reveal columns with slight fade + rise */
+  .slide.frustrations .fr-col.r-step {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .slide.frustrations .fr-col.r-step.shown {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Remake stat slide: caption on top, waffle + side text side-by-side below */
+  .slide.remake-stat {
+    padding: 24px 40px 40px;
+    align-items: stretch;
+    justify-content: flex-start;
+    text-align: left;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--bg);
+  }
+  .slide.remake-stat .rs-waffle-caption {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 26px;
+    color: #1B5D9F;
+    line-height: 1.2;
+    text-align: left;
+    margin: 0;
+    flex: 0 0 auto;
+  }
+  .slide.remake-stat .rs-waffle-caption .rs-cap-remake,
+  .slide.remake-stat .rs-waffle-caption .rs-cap-sequel,
+  .slide.remake-stat .rs-waffle-caption .rs-cap-requel {
+    font-family: "Taprom", "Benguiat", serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .slide.remake-stat .rs-waffle-caption .rs-cap-remake { color: #0f285a; }
+  .slide.remake-stat .rs-waffle-caption .rs-cap-sequel { color: #3876af; }
+  .slide.remake-stat .rs-waffle-caption .rs-cap-requel { color: #4c96c8; }
+  .slide.remake-stat .rs-body-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+
+  /* Center slot — holds the waffle and the stacked chart, layered on top of each other.
+     Nudged a bit left of true center; the side-text sits right next to it. */
+  .slide.remake-stat .rs-left-slot {
+    position: relative;
+    flex: 0 0 auto;
+    aspect-ratio: 22 / 27; /* match waffle's (cols×2):(rows×3) */
+    max-height: 78%;
+    height: 78%;
+    margin-left: 6%;
+    align-self: center;
+  }
+  .slide.remake-stat .rs-left-slot > .rs-waffle,
+  .slide.remake-stat .rs-left-slot > .rs-stack {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.45s ease;
+  }
+  .slide.remake-stat .rs-waffle {
+    --cols: 11;
+    --rows: 9;
+    --gap: 4px;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+    gap: var(--gap);
+    opacity: 1;
+  }
+  /* Waffle stays visible even after mint reveal fires. */
+
+  /* Right slot — sits right next to the waffle so the ← arrows point at segments.
+     Matches the waffle's 78% height so legend items align with the waffle rows.
+     Widened to give the mint image room to display naturally on reveal. */
+  .slide.remake-stat .rs-right-slot {
+    position: relative;
+    flex: 1 1 auto;
+    align-self: center;
+    height: 78%;
+    max-height: 78%;
+    min-height: 0;
+    min-width: 280px;
+  }
+  /* Hide the reveal-text arrows + labels once the stacked chart takes over */
+  .slide.remake-stat:has([data-rs-show="stack"].shown) .rs-right-slot .rs-side-text {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .slide.remake-stat .rs-right-slot > .rs-side-text {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.45s ease;
+  }
+  .slide.remake-stat .rs-side-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 18px;
+    align-self: stretch;
+    opacity: 1;
+    min-width: 220px;
+    max-width: 320px;
+  }
+  /* Legend + takeaway stay visible while the mint image swaps in on the left */
+  .slide.remake-stat .rs-stack-title {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--ink);
+    line-height: 1.2;
+    margin: 0;
+    text-align: left;
+  }
+  .slide.remake-stat .rs-stack-svg-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .slide.remake-stat .rs-stack-svg-wrap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+  }
+  .slide.remake-stat .rs-stack-svg-wrap .ts-axis text {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 12px;
+    fill: #4a4a4a;
+  }
+  .slide.remake-stat .rs-stack-svg-wrap .ts-axis path,
+  .slide.remake-stat .rs-stack-svg-wrap .ts-axis line {
+    stroke: #d0d0d0;
+  }
+  .slide.remake-stat .rs-stack-svg-wrap .ts-legend text {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    fill: #1a1a1a;
+  }
+  /* Mint image sits to the right of the legend, closer to the waffle, bigger. */
+  .slide.remake-stat .rs-right-slot > .rs-mint-pdf {
+    position: absolute;
+    top: 50%;
+    left: 260px;
+    transform: translateY(-50%);
+    max-width: calc(100% - 260px);
+    max-height: 130%;
+    width: auto;
+    height: 130%;
+    object-fit: contain;
+    display: block;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+  }
+  .slide.remake-stat:has([data-rs-show="mint"].shown) .rs-right-slot > .rs-mint-pdf {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .slide.remake-stat .rs-takeaway {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    text-align: left;
+    margin-top: auto;
+  }
+  .slide.remake-stat .rs-takeaway-big {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 1;
+    color: #c12818;
+  }
+  .slide.remake-stat .rs-takeaway-line {
+    font-family: "Benguiat", serif;
+    font-size: 20px;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .slide.remake-stat .rs-takeaway-line em {
+    color: #1e4d8c;
+    font-style: italic;
+    font-weight: 700;
+  }
+  .slide.remake-stat .rs-legend {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    height: 0;
+    min-height: 0;
+    font-family: "Benguiat", serif;
+    color: var(--ink);
+  }
+  /* Heights proportional to film counts: 23, 26, 9, 41 */
+  .slide.remake-stat .rs-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .slide.remake-stat .rs-legend-remake    { flex: 23 1 0; }
+  .slide.remake-stat .rs-legend-franchise { flex: 26 1 0; }
+  .slide.remake-stat .rs-legend-both      { flex:  9 1 0; }
+  .slide.remake-stat .rs-legend-original  { flex: 41 1 0; }
+  .slide.remake-stat .rs-arrow {
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 700;
+  }
+  .slide.remake-stat .rs-legend-text {
+    font-family: "Taprom", "Benguiat", serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.1;
+    text-align: left;
+    letter-spacing: 0.02em;
+  }
+  .slide.remake-stat .rs-legend-text em {
+    font-style: italic;
+    margin-right: 6px;
+  }
+  .slide.remake-stat .rs-legend-remake    .rs-arrow, .slide.remake-stat .rs-legend-remake    .rs-legend-text { color: #0f285a; }
+  .slide.remake-stat .rs-legend-franchise .rs-arrow, .slide.remake-stat .rs-legend-franchise .rs-legend-text { color: #3876af; }
+  .slide.remake-stat .rs-legend-both      .rs-arrow, .slide.remake-stat .rs-legend-both      .rs-legend-text { color: #4c96c8; }
+  .slide.remake-stat .rs-legend-original  .rs-arrow, .slide.remake-stat .rs-legend-original  .rs-legend-text { color: #8a7f66; }
+  /* Each legend item appears with its corresponding highlight step */
+  .slide.remake-stat:has([data-rs-highlight="remake"].shown)    .rs-legend-remake,
+  .slide.remake-stat:has([data-rs-highlight="franchise"].shown) .rs-legend-remake,
+  .slide.remake-stat:has([data-rs-highlight="franchise"].shown) .rs-legend-franchise,
+  .slide.remake-stat:has([data-rs-highlight="both"].shown)      .rs-legend-remake,
+  .slide.remake-stat:has([data-rs-highlight="both"].shown)      .rs-legend-franchise,
+  .slide.remake-stat:has([data-rs-highlight="both"].shown)      .rs-legend-both,
+  .slide.remake-stat:has([data-rs-highlight="original"].shown)  .rs-legend-remake,
+  .slide.remake-stat:has([data-rs-highlight="original"].shown)  .rs-legend-franchise,
+  .slide.remake-stat:has([data-rs-highlight="original"].shown)  .rs-legend-both,
+  .slide.remake-stat:has([data-rs-highlight="original"].shown)  .rs-legend-original {
+    opacity: 1;
+  }
+  .slide.remake-stat .rs-cell {
+    position: relative;
+    background: #d8d8d8;
+    overflow: hidden;
+    border-radius: 2px;
+    min-width: 0;
+    min-height: 0;
+  }
+  .slide.remake-stat .rs-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* Tint overlay on each poster — color is set per-category when its step is shown */
+  .slide.remake-stat .rs-cell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    transition: background 0.4s ease;
+  }
+  /* Waffle highlight colors — clearly distinct blues so categories don't blur together:
+     Remake dark navy  |  Sequel teal  |  Remake + Sequel light sky  |  Original warm gray */
+  /* Step 1: remakes */
+  .slide.remake-stat:has([data-rs-highlight="remake"].shown) .rs-cell.is-remake::after {
+    background: rgba(15, 40, 90, 0.9);
+  }
+  .slide.remake-stat:has([data-rs-highlight="remake"].shown) .rs-cell:not(.is-remake)::after {
+    background: rgba(255, 255, 255, 0.78);
+    mix-blend-mode: normal;
+  }
+  /* Step 2: + sequels */
+  .slide.remake-stat:has([data-rs-highlight="franchise"].shown) .rs-cell.is-remake::after {
+    background: rgba(15, 40, 90, 0.9);
+  }
+  .slide.remake-stat:has([data-rs-highlight="franchise"].shown) .rs-cell.is-franchise::after {
+    background: rgba(56, 118, 175, 0.9);
+  }
+  .slide.remake-stat:has([data-rs-highlight="franchise"].shown) .rs-cell.is-original::after,
+  .slide.remake-stat:has([data-rs-highlight="franchise"].shown) .rs-cell.is-both::after {
+    background: rgba(255, 255, 255, 0.78);
+    mix-blend-mode: normal;
+  }
+  /* Step 3: + remake + sequel */
+  .slide.remake-stat:has([data-rs-highlight="both"].shown) .rs-cell.is-remake::after {
+    background: rgba(15, 40, 90, 0.9);
+  }
+  .slide.remake-stat:has([data-rs-highlight="both"].shown) .rs-cell.is-franchise::after {
+    background: rgba(56, 118, 175, 0.9);
+  }
+  .slide.remake-stat:has([data-rs-highlight="both"].shown) .rs-cell.is-both::after {
+    background: rgba(130, 190, 220, 0.95);
+  }
+  .slide.remake-stat:has([data-rs-highlight="both"].shown) .rs-cell.is-original::after {
+    background: rgba(255, 255, 255, 0.78);
+    mix-blend-mode: normal;
+  }
+  /* Step 4: all four categories tinted */
+  .slide.remake-stat:has([data-rs-highlight="original"].shown) .rs-cell.is-remake::after    { background: rgba(15, 40, 90, 0.9); }
+  .slide.remake-stat:has([data-rs-highlight="original"].shown) .rs-cell.is-franchise::after { background: rgba(56, 118, 175, 0.9); }
+  .slide.remake-stat:has([data-rs-highlight="original"].shown) .rs-cell.is-both::after      { background: rgba(130, 190, 220, 0.95); }
+  .slide.remake-stat:has([data-rs-highlight="original"].shown) .rs-cell.is-original::after  { background: rgba(200, 191, 168, 0.85); }
+  .slide.remake-stat .rs-cell .rs-cell-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2px;
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 6px;
+    line-height: 1.05;
+    color: #1B5D9F;
+    background: #f1efe6;
+  }
+  .slide.remake-stat .rs-body {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 32px;
+  }
+  .slide.remake-stat .rs-big {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 120px;
+    line-height: 0.9;
+    color: #1B5D9F;
+    text-shadow: 4px 4px 0 var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .slide.remake-stat .rs-mid {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 36px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+  .slide.remake-stat .rs-line {
+    font-family: "Benguiat", serif;
+    font-size: 22px;
+    color: var(--ink);
+    line-height: 1.35;
+    max-width: 32ch;
+    margin: 0;
+  }
+  .slide.remake-stat .rs-line em {
+    color: #1B5D9F;
+    font-style: italic;
+    font-weight: 700;
+  }
+
+  /* Remake mapping — 3×2 grid of poster-pair cards, revealed column-by-column */
+  .slide.remake-table {
+    padding: 32px 53px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+  .slide.remake-table .rt-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-auto-flow: column;
+    gap: 22px 30px;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* Explicit cell placement: column-by-column, top then bottom */
+  .slide.remake-table .rt-pos-1 { grid-column: 1; grid-row: 1; }
+  .slide.remake-table .rt-pos-2 { grid-column: 1; grid-row: 2; }
+  .slide.remake-table .rt-pos-3 { grid-column: 2; grid-row: 1; }
+  .slide.remake-table .rt-pos-4 { grid-column: 2; grid-row: 2; }
+  .slide.remake-table .rt-pos-5 { grid-column: 3; grid-row: 1; }
+  .slide.remake-table .rt-pos-6 { grid-column: 3; grid-row: 2; }
+  /* Reveal: card appears centered+large on first click, then settles into its
+     grid slot on the next click (when its .rt-settle sibling is also shown). */
+  .slide.remake-table .rt-settle {
+    display: none;  /* invisible marker step — purely controls layout state */
+  }
+  .slide.remake-table .rt-card.rt-fly {
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.55s cubic-bezier(0.34, 1.4, 0.5, 1);
+  }
+  /* Card has appeared but not yet settled: lift out of grid, center on slide. */
+  .slide.remake-table .rt-card.rt-fly.shown {
+    opacity: 1;
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 60%;
+    height: 70%;
+    z-index: 20;
+    background: var(--bg);
+    padding: 24px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+  }
+  /* Once the .rt-settle marker is shown too, drop back into the grid slot. */
+  .slide.remake-table .rt-card.rt-fly.settled {
+    position: static;
+    width: auto;
+    height: auto;
+    inset: auto;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    z-index: 1;
+  }
+  .slide.remake-table .rt-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-height: 0;
+    min-width: 0;
+  }
+  .slide.remake-table .rt-pair {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .slide.remake-table .rt-poster {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .slide.remake-table .rt-poster img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  }
+  .slide.remake-table .rt-is-word {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 18px;
+    color: #1B5D9F;
+    text-align: center;
+  }
+
+  /* Language label appears above the ORIGINAL poster after final reveal.
+     Card uses a 3-col grid (poster | is | poster) with a 12px gap, so the
+     left poster occupies (100% - 12*2 - is-width) / 2 starting at column 1. */
+  .slide.remake-table .rt-card {
+    position: relative;
+  }
+  .slide.remake-table .rt-card::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: -20px;
+    left: 0;
+    width: calc((100% - 44px) / 2);
+    text-align: center;
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .slide.remake-table.langs-shown .rt-card::before {
+    opacity: 1;
+  }
+  /* Pastel fill only behind the ORIGINAL (left) poster after final reveal */
+  .slide.remake-table .rt-pair .rt-poster:first-child {
+    transition: background 0.45s ease, padding 0.45s ease;
+    border-radius: 4px;
+  }
+  .slide.remake-table.langs-shown .rt-pair .rt-poster:first-child {
+    background: var(--lang-color, #eee);
+    padding: 6px;
+  }
+  /* Hide the trigger element */
+  .slide.remake-table .rt-lang-trigger {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  /* Requel formula slide */
+  .slide.requel {
+    padding: 28px 53px 32px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 18px;
+  }
+  /* "Remake + Sequel" red banner sits exactly on top of the Drishyam-2 "Remake" tag pill */
+  .slide.requel .rq-poster-final .rq-tag { position: relative; }
+  .slide.requel .rq-banner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-6deg);
+    display: inline-block;
+    background: var(--accent);
+    color: #ffffff;
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 6px 14px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    line-height: 1;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .slide.requel .rq-banner.r-step {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .slide.requel .rq-banner.r-step.shown {
+    opacity: 1;
+  }
+  /* Formula appears centered above the Don row after Don sequence completes — no background */
+  .slide.requel .rq-formula {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 38px;
+    color: var(--ink);
+    text-align: center;
+    margin: 0;
+    line-height: 1.2;
+    z-index: 4;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    white-space: nowrap;
+  }
+  .slide.requel .rq-formula.r-step {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .slide.requel .rq-formula.r-step.shown {
+    opacity: 1;
+  }
+  .slide.requel .rq-formula .rq-term { color: #1B5D9F; font-style: italic; }
+  .slide.requel .rq-formula .rq-op { color: var(--ink); margin: 0 6px; }
+  .slide.requel .rq-formula .rq-result {
+    color: var(--ink);
+    font-style: italic;
+    text-decoration: underline;
+    text-decoration-color: #1B5D9F;
+    text-underline-offset: 4px;
+  }
+  /* Stage holds both Drishyam + Don examples in the same footprint; Don replaces Drishyam on reveal. */
+  .slide.requel .rq-stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: block;
+  }
+  .slide.requel .rq-example {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    gap: 24px;
+    transition: opacity 0.4s ease;
+  }
+  .slide.requel .rq-example-drishyam {
+    grid-template-columns: 1fr 40px 1fr 44px 1fr 40px 1fr;
+    gap: 14px;
+    opacity: 1;
+  }
+  .slide.requel .rq-example-don {
+    grid-template-columns: 1fr 40px 1fr 44px 1fr 44px 1fr;
+    gap: 14px;
+    width: 100%;
+    left: 0;
+    right: 0;
+    opacity: 0;
+  }
+  /* When Don's reveal step is shown, hide the Drishyam example */
+  .slide.requel:has(.rq-example-don.shown) .rq-example-drishyam {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .slide.requel .rq-example-don.shown {
+    opacity: 1;
+  }
+
+  /* Individual poster tile — same blue-border frame style as Cntrl + C, Cntrl + V posters */
+  .slide.requel .rq-poster {
+    position: relative;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .slide.requel .rq-poster img {
+    max-width: 100%;
+    max-height: calc(100% - 44px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    padding: 6px;
+    background: #f8f8f8;
+    border: 2px solid #1B5D9F;
+    outline: 1px solid rgba(27, 93, 159, 0.25);
+    outline-offset: -8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 12px 24px -10px rgba(0, 0, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+  }
+  /* Don posters render at their natural aspect ratio inside identically sized boxes */
+  .slide.requel .rq-example-don .rq-poster {
+    height: 100%;
+    min-height: 0;
+  }
+  .slide.requel .rq-example-don .rq-poster img {
+    max-width: 100%;
+    max-height: calc(100% - 44px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Language-chip-style label above each poster */
+  .slide.requel .rq-tag {
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #1B5D9F;
+    background: #ffffff;
+    padding: 6px 14px 6px 12px;
+    border: 1.5px solid #1B5D9F;
+    border-radius: 999px;
+    line-height: 1;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    order: -1;
+  }
+  .slide.requel .rq-tag::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #1B5D9F;
+  }
+  /* Question-mark tag on the "?" Don 3 poster — accented red, no dot */
+  .slide.requel .rq-tag.rq-tag-q {
+    color: var(--accent);
+    border-color: var(--accent);
+    font-size: 18px;
+    font-weight: 700;
+    padding: 6px 16px;
+    letter-spacing: 0;
+  }
+  .slide.requel .rq-tag.rq-tag-q::before {
+    display: none;
+  }
+  /* Show the poster with a stagger — tag stays visible, image + border fade in together */
+  .slide.requel .rq-poster.r-step > img,
+  .slide.requel .rq-poster.r-step > .rq-tag {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .slide.requel .rq-poster.r-step.shown > img,
+  .slide.requel .rq-poster.r-step.shown > .rq-tag {
+    opacity: 1;
+  }
+
+
+  .slide.requel .rq-plus {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 46px;
+    color: #1B5D9F;
+    text-align: center;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    align-self: center;
+  }
+  .slide.requel .rq-plus.r-step.shown {
+    opacity: 1;
+  }
+  /* "is" connector between Original and Remake — matches Cntrl+C "is" style */
+  .slide.requel .rq-is {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 20px;
+    color: #1B5D9F;
+    text-align: center;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    align-self: center;
+  }
+  .slide.requel .rq-is.r-step.shown {
+    opacity: 1;
+  }
+
+  /* Sholay → RGV ki Aag slide: two posters with a "becomes" arrow */
+  .slide.sholay-aag {
+    padding: 40px 53px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    background: var(--bg);
+  }
+  .slide.sholay-aag .sa-side {
+    flex: 0 1 38%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    height: 100%;
+    justify-content: center;
+  }
+  .slide.sholay-aag .sa-poster {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 78%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 6px solid var(--ink);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  }
+  .slide.sholay-aag .sa-poster img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  .slide.sholay-aag .sa-meta {
+    text-align: center;
+    flex: 0 0 auto;
+  }
+  .slide.sholay-aag .sa-title {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .slide.sholay-aag .sa-remake .sa-title { color: #1B5D9F; }
+  .slide.sholay-aag .sa-year {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink);
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+  .slide.sholay-aag .sa-arrow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .slide.sholay-aag .sa-arrow-word {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 22px;
+    color: #1B5D9F;
+    letter-spacing: 0.04em;
+  }
+  .slide.sholay-aag .sa-arrow-mark {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 56px;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  /* Akshay + Manushi age-gap pop-up overlay */
+  .slide.age-akshay .am-pop {
+    position: absolute;
+    left: 14%;
+    bottom: -60%;
+    height: 55%;
+    width: auto;
+    opacity: 0;
+    transition: bottom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .slide.age-akshay .am-pop.shown {
+    bottom: 0;
+    opacity: 1;
+  }
+  .slide.age-akshay .am-wrap {
+    position: relative;
+    height: 100%;
+    display: inline-block;
+  }
+  .slide.age-akshay .am-wrap img {
+    height: 100%;
+    width: auto;
+    display: block;
+  }
+  .slide.age-akshay .am-age {
+    position: absolute;
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 38px;
+    color: #1B5D9F;
+    text-shadow: 2px 2px 0 var(--ink);
+    pointer-events: none;
+  }
+  /* Numbers float above each head — measured from the cropped png */
+  .slide.age-akshay .am-age-girl { top: -8%; left: 14%; }
+  .slide.age-akshay .am-age-man  { top: -8%; right: 14%; }
+
+  /* Four-image grid slide with title on top */
+  .slide.four-grid {
+    padding: 28px 53px 32px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 16px;
+  }
+  .slide.four-grid .fg-title {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 30px;
+    color: var(--ink);
+    line-height: 1.2;
+    margin: 0;
+    text-align: left;
+  }
+  .slide.four-grid .fg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 16px;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .slide.four-grid .fg-grid img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    min-width: 0;
+    min-height: 0;
+    margin: auto;
+  }
+
+  /* Chart slide with a title on top */
+  .slide.titled-chart {
+    padding: 28px 53px 32px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 18px;
+  }
+  .slide.titled-chart .tc-title {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 30px;
+    color: var(--ink);
+    text-align: left;
+    margin: 0;
+    line-height: 1.2;
+  }
+  .slide.titled-chart .tc-title em {
+    color: #1B5D9F;
+    font-style: italic;
+  }
+  .slide.titled-chart img {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  /* Stacked-bar trend chart slide — transposed portrait chart full-height on right, title on left */
+  .slide.trend-stack {
+    padding: 0;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 0;
+    overflow: hidden;
+  }
+  .slide.trend-stack .ts-title {
+    flex: 1 1 auto;
+    max-width: none;
+    align-self: center;
+    padding: 28px 53px;
+  }
+  .slide.trend-stack .ts-stage {
+    flex: 0 0 420px;
+    width: 420px;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    align-self: stretch;
+    padding: 0;
+    margin: 0;
+  }
+  .slide.source-area {
+    padding: 28px 0 0;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 16px;
+  }
+  .slide.source-area .sa-title {
+    padding: 0 53px;
+  }
+  .slide.trend-stack .ts-title,
+  .slide.source-area .sa-title {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--ink);
+    line-height: 1.2;
+    margin: 0;
+    text-align: left;
+  }
+  .slide.source-area .sa-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .slide.trend-stack svg,
+  .slide.source-area svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+  }
+  .slide.trend-stack .ts-axis text,
+  .slide.source-area .sa-axis text {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 12px;
+    fill: #4a4a4a;
+  }
+  .slide.trend-stack .ts-axis path,
+  .slide.trend-stack .ts-axis line,
+  .slide.source-area .sa-axis path,
+  .slide.source-area .sa-axis line {
+    stroke: #d0d0d0;
+  }
+  .slide.trend-stack .ts-legend text,
+  .slide.source-area .sa-legend text {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    fill: #1a1a1a;
+  }
+
+  /* Remake-ROI heatmap slide */
+  .slide.remake-roi {
+    padding: 28px 60px 60px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 8px;
+    background: var(--bg);
+  }
+  .slide.remake-roi .rr-header {
+    flex: 0 0 auto;
+    text-align: left;
+  }
+  .slide.remake-roi .rr-title {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.15;
+    color: var(--ink);
+    margin: 0 0 4px 0;
+    text-align: left;
+  }
+  .slide.remake-roi .rr-title-requel {
+    color: var(--accent);
+    font-style: italic;
+  }
+  /* Akshay meme pops in from the right-bottom on the ROI slide — no border, no background */
+  .slide.remake-roi .rr-meme {
+    position: absolute;
+    right: 220px;
+    bottom: 0;
+    width: 420px;
+    max-width: 50%;
+    height: auto;
+    object-fit: contain;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    opacity: 1;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .slide.remake-roi .rr-sub {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #4a4a4a;
+    text-align: left;
+  }
+  .slide.remake-roi .rr-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .slide.remake-roi .rr-stage svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+  }
+  .slide.remake-roi .rr-cell {
+    shape-rendering: crispEdges;
+  }
+  .slide.remake-roi .rr-row-label {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    fill: #1a1a1a;
+  }
+  .slide.remake-roi .rr-col-label {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    fill: #1a1a1a;
+  }
+  .slide.remake-roi .rr-value {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .slide.remake-roi .rr-legend-scale {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 11px;
+    fill: #555;
+  }
+  .slide.remake-roi .rr-foot {
+    flex: 0 0 auto;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 12px;
+    color: #555;
+    text-align: left;
+    line-height: 1.3;
+    margin-top: 4px;
+  }
+
+  /* Statement slide — single centered sentence */
+  .slide.statement-slide {
+    padding: 60px 80px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: var(--bg);
+  }
+  .slide.statement-slide .statement-body {
+    max-width: 1000px;
+  }
+  .slide.statement-slide .statement-text {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 44px;
+    color: #1B5D9F;
+    line-height: 1.25;
+    margin: 0;
+  }
+  .slide.statement-slide .statement-text em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  /* Remake-pairs slide: 3×2 grid of original → Hindi remake pairs with language tags */
+  .slide.remake-pairs {
+    padding: 32px 48px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 24px;
+  }
+  .slide.remake-pairs .rp-title {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 32px;
+    color: #1B5D9F;
+    line-height: 1.1;
+    margin: 0;
+    text-align: left;
+  }
+  .slide.remake-pairs .rp-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 40px 64px;
+  }
+  .slide.remake-pairs .rp-card {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    min-width: 0;
+    min-height: 0;
+  }
+  /* Language chip — refined pill with a soft dot marker */
+  .slide.remake-pairs .rp-lang {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lang-color, #1B5D9F);
+    background: #ffffff;
+    padding: 6px 14px 6px 12px;
+    border: 1.5px solid var(--lang-color, #1B5D9F);
+    border-radius: 999px;
+    line-height: 1;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+  .slide.remake-pairs .rp-lang::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--lang-color, #1B5D9F);
+  }
+  .slide.remake-pairs .rp-pair {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 16px;
+    align-items: center;
+    justify-items: center;
+  }
+  /* Blue-border frame around each poster (fandom slide style) */
+  .slide.remake-pairs .rp-pair img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 6px;
+    background: #f8f8f8;
+    border: 2px solid #1B5D9F;
+    outline: 1px solid rgba(27, 93, 159, 0.25);
+    outline-offset: -8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 12px 24px -10px rgba(0, 0, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+  }
+  .slide.remake-pairs .rp-arrow {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--lang-color, #1B5D9F);
+    letter-spacing: 0.02em;
+  }
+
+  /* Black-background block: all the chart slides between AWM title and new-india */
+  .slide.awm-block {
+    background: #000000;
+    color: #f4f4f4;
+  }
+  .slide.awm-block .label,
+  .slide.awm-block .tc-title,
+  .slide.awm-block .frame,
+  .slide.awm-block .row,
+  .slide.awm-block .aa-cap {
+    color: #f4f4f4;
+  }
+
+  /* Slope-pair slide: two charts side by side with a red/green tagline */
+  .slide.titled-chart.slope-pair .sp-line {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.25;
+    color: var(--ink);
+    margin: 8px 0 0;
+    text-align: right;
+    padding-right: 22%;
+    flex: 0 0 auto;
+  }
+  .slide.titled-chart.slope-pair .sp-line .sp-red   { color: #c12818; font-style: italic; }
+  .slide.titled-chart.slope-pair .sp-line .sp-green { color: #1f9d55; font-style: italic; }
+  .slide.titled-chart.slope-pair .sp-row {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    gap: 0;
+  }
+  .slide.titled-chart.slope-pair .sp-card {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    min-height: 0;
+    flex: 0 1 auto;
+    height: 100%;
+  }
+  .slide.titled-chart.slope-pair .sp-card img {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.titled-chart.slope-pair .sp-cap {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1;
+    flex: 0 0 auto;
+  }
+  .slide.titled-chart.slope-pair .sp-cap-orig   { color: #1B5D9F; }
+  .slide.titled-chart.slope-pair .sp-cap-remake { color: #c12818; }
+  .slide.titled-chart.slope-pair .sp-risk {
+    position: absolute;
+    right: 48px;
+    bottom: 48px;
+    max-width: 320px;
+    max-height: 320px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .slide.titled-chart.slope-pair .sp-risk.r-step.shown {
+    opacity: 1;
+  }
+
+  /* D3 dumbbell chart on the "Remakes are not loved at all" slide */
+  .slide.titled-chart-d3 {
+    padding: 28px 53px 32px;
+    gap: 18px;
+  }
+  .slide.titled-chart-d3 .tc-title {
+    font-size: 28px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .slide.titled-chart-d3 .tc-chart-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+  .slide.titled-chart-d3 .tc-chart-wrap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+  }
+  .slide.titled-chart-d3 .rr-legend {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 16px;
+    fill: #1a1a1a;
+  }
+  .slide.titled-chart-d3 .rr-legend .rr-orig { fill: #1B5D9F; font-weight: 700; }
+  .slide.titled-chart-d3 .rr-legend .rr-remake { fill: #c12818; font-weight: 700; }
+  .slide.titled-chart-d3 .rr-axis text {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 12px;
+    fill: #4a4a4a;
+  }
+  .slide.titled-chart-d3 .rr-axis path,
+  .slide.titled-chart-d3 .rr-axis line {
+    stroke: #d0d0d0;
+  }
+  .slide.titled-chart-d3 .rr-y-label {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 13px;
+    fill: #4a4a4a;
+  }
+  .slide.titled-chart-d3 .rr-film-label {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    fill: #1a1a1a;
+    text-anchor: middle;
+  }
+  .slide.titled-chart-d3 .rr-link {
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .slide.titled-chart-d3 .rr-dot-orig {
+    fill: #1B5D9F;
+  }
+  .slide.titled-chart-d3 .rr-dot-remake {
+    fill: #c12818;
+  }
+  .slide.titled-chart-d3 .rr-value {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    fill: #ffffff;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+  }
+  /* Highlight step: when the r-step fires, fade everything except Karz + Sholay */
+  .slide.titled-chart-d3 .rr-link,
+  .slide.titled-chart-d3 .rr-dot-orig,
+  .slide.titled-chart-d3 .rr-dot-remake,
+  .slide.titled-chart-d3 .rr-value,
+  .slide.titled-chart-d3 .rr-film-label {
+    transition: opacity 0.5s ease;
+  }
+  .slide.titled-chart-d3:has([data-rr-highlight].shown) .rr-link:not(.rr-highlight),
+  .slide.titled-chart-d3:has([data-rr-highlight].shown) .rr-dot-orig:not(.rr-highlight),
+  .slide.titled-chart-d3:has([data-rr-highlight].shown) .rr-dot-remake:not(.rr-highlight),
+  .slide.titled-chart-d3:has([data-rr-highlight].shown) .rr-value:not(.rr-highlight),
+  .slide.titled-chart-d3:has([data-rr-highlight].shown) .rr-film-label:not(.rr-highlight) {
+    opacity: 0.08;
+  }
+
+  /* Ye Naya Hindustan hai — curtain slide, AWM-style poster, English left + Hindi right */
+  .slide.new-india {
+    padding: 40px 53px 180px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--bg);
+    color: var(--ink);
+    flex-direction: row;
+    gap: 56px;
+    flex-wrap: wrap;
+  }
+  .slide.new-india .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .slide.new-india .word {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 96px;
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: #1B5D9F;
+    text-shadow:
+      4px 4px 0 var(--ink),
+      -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.new-india .word.middle {
+    color: var(--ink);
+    text-shadow: 4px 4px 0 #1B5D9F, -2px -2px 0 rgba(0,0,0,0.18);
+  }
+  .slide.new-india .word.right {
+    color: #1B5D9F;
+    text-shadow: 4px 4px 0 var(--ink), -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.new-india .new-india-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .slide.new-india .conn {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 37px;
+    color: var(--ink);
+    letter-spacing: 0.06em;
+    margin: -3px 0;
+  }
+  /* Hindi stack */
+  .slide.new-india .stack-hindi .hword {
+    font-family: "Noto Sans Devanagari", serif;
+    font-weight: 900;
+    font-size: 96px;
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: #1B5D9F;
+    text-shadow:
+      4px 4px 0 var(--ink),
+      -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.new-india .stack-hindi .hword.middle {
+    color: var(--ink);
+    text-shadow: 4px 4px 0 #1B5D9F, -2px -2px 0 rgba(0,0,0,0.18);
+  }
+  .slide.new-india .stack-hindi .hword.right {
+    color: #1B5D9F;
+    text-shadow: 4px 4px 0 var(--ink), -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.new-india .stack-hindi .hindi-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .slide.new-india .stack-hindi .hconn {
+    font-family: "Noto Sans Devanagari", serif;
+    font-weight: 700;
+    font-size: 56px;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+    line-height: 0.95;
+  }
+  /* Extra breath under "हिंदुस्तान" so "है।" reads as a separate beat */
+  .slide.new-india .stack-hindi .hword-hai {
+    margin-top: 22px;
+  }
+  /* Characters visible by default */
+  .slide.new-india .ni-char {
+    position: absolute;
+    height: 48%;
+    width: auto;
+    bottom: 0;
+    opacity: 1;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .slide.new-india .ni-char-l1 { left: 0; }
+  .slide.new-india .ni-char-l2 { left: 18%; height: 42%; }
+  .slide.new-india .ni-char-r1 { right: 0; }
+  .slide.new-india .ni-char-r2 { right: 18%; height: 42%; }
+
+  /* Remake pe remake — film-poster style, English left + Hindi right reveal */
+  .slide.remake-title {
+    padding: 150px 53px 40px;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: center;
+    background: var(--bg);
+    flex-direction: row;
+    gap: 56px;
+  }
+  .slide.remake-title .rt-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .slide.remake-title .rt-word {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 84px;
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: #1B5D9F;
+    text-shadow:
+      3px 3px 0 var(--ink),
+      -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.remake-title .rt-word:nth-child(3) { color: var(--ink); text-shadow: 3px 3px 0 #1B5D9F, -2px -2px 0 rgba(0,0,0,0.18); }
+  .slide.remake-title .rt-word:nth-child(5) { color: #1B5D9F; text-shadow: 3px 3px 0 var(--ink), -2px -2px 0 rgba(27, 93, 159, 0.25); }
+  .slide.remake-title .rt-conn {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 28px;
+    color: var(--ink);
+    letter-spacing: 0.06em;
+    margin: -3px 0;
+  }
+  /* Hindi stack: same film-poster style, devanagari font */
+  .slide.remake-title .rt-hindi-stack .rt-hword {
+    font-family: "Noto Sans Devanagari", serif;
+    font-weight: 900;
+    font-size: 84px;
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: #1B5D9F;
+    text-shadow:
+      3px 3px 0 var(--ink),
+      -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.remake-title .rt-hindi-stack .rt-hword:nth-child(3) {
+    color: var(--ink);
+    text-shadow: 3px 3px 0 #1B5D9F, -2px -2px 0 rgba(0,0,0,0.18);
+  }
+  .slide.remake-title .rt-hindi-stack .rt-hword:nth-child(5) {
+    color: #1B5D9F;
+    text-shadow: 3px 3px 0 var(--ink), -2px -2px 0 rgba(27, 93, 159, 0.25);
+  }
+  .slide.remake-title .rt-hindi-stack .rt-hconn {
+    font-family: "Noto Sans Devanagari", serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    margin: -3px 0;
+  }
+  /* Sunny Deol pops up from the bottom-right when revealed */
+  .slide.remake-title .rt-sunny {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 42%;
+    width: auto;
+    opacity: 1;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .slide.remake-title .rt-salman {
+    position: absolute;
+    left: 80px;
+    bottom: -5%;
+    height: 42%;
+    width: auto;
+    opacity: 1;
+    pointer-events: none;
+    z-index: 10;
+    clip-path: inset(0 0 12% 0);
+  }
+
+  .slide.awm-title .conn {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 37px;
+    color: var(--ink);
+    letter-spacing: 0.06em;
+    margin: -3px 0;
+  }
+
+  /* Single-chart slide — image fills, optional revealed second image replaces */
+  .slide.chart {
+    padding: 33px 53px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .slide.chart .frame {
+    position: relative;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.chart .frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+  }
+  .slide.chart .frame img.r-step { opacity: 0; pointer-events: none; }
+  .slide.chart .frame img.r-step.shown { opacity: 1; }
+  .slide.chart .frame img.base { opacity: 1; }
+  .slide.chart .frame img.base.hidden { opacity: 0; }
+  .slide.chart .label {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 28px;
+    color: var(--accent);
+    text-align: center;
+  }
+
+  /* Two-image side-by-side click reveal — for the Leo/Akshay pair and Marriage pair */
+  .slide.pair-chart {
+    padding: 27px 40px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+  }
+  .slide.pair-chart .label {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 28px;
+    color: var(--accent);
+  }
+  .slide.pair-chart .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 21px;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.pair-chart .row img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  /* age-akshay: figure cards with images at equal square size + label below */
+  .slide.pair-chart.age-akshay {
+    justify-content: flex-start;
+    padding-top: 14px;
+  }
+  .slide.pair-chart.age-akshay .row {
+    align-items: stretch;
+  }
+  .slide.pair-chart.age-akshay .aa-card {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+    min-height: 0;
+  }
+  .slide.pair-chart.age-akshay .aa-card img,
+  .slide.pair-chart.age-akshay .aa-card .aa-iframe {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.pair-chart.age-akshay .aa-card .aa-iframe {
+    border: 0;
+    display: block;
+    background: #080814;
+  }
+  .slide.pair-chart.age-akshay .aa-cap {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 1;
+    flex: 0 0 auto;
+  }
+  .slide.pair-chart.age-akshay .aa-cap-orig   { color: #1B5D9F; }
+  .slide.pair-chart.age-akshay .aa-cap-remake { color: #c12818; }
+  .slide.pair-chart .row .r-step { opacity: 0; pointer-events: none; }
+  .slide.pair-chart .row .r-step.shown { opacity: 1; }
+
+  /* Marriage heatmap slide — D3 chart, two panels side by side on black */
+  .slide.marriage-heatmap {
+    padding: 18px 24px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    gap: 0;
+  }
+  .slide.marriage-heatmap .mh-headline {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 34px;
+    color: #ffb74d;
+    margin: 0 0 10px 0;
+    text-align: center;
+    line-height: 1.1;
+    flex: 0 0 auto;
+  }
+  .slide.marriage-heatmap .mh-wrap {
+    position: relative;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .slide.marriage-heatmap .mh-charts {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 18px;
+    overflow: hidden;
+  }
+  .slide.marriage-heatmap .mh-panel {
+    flex: 1 1 50%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .slide.marriage-heatmap .mh-panel-title {
+    font-family: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    margin: 0 0 -10px 0;
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .slide.marriage-heatmap .mh-panel-chart {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    padding: 8px 0 10px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  .slide.marriage-heatmap .mh-panel-chart svg {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+  }
+  .slide.marriage-heatmap .mh-cell { stroke: #000; stroke-width: 0.5px; shape-rendering: crispEdges; cursor: pointer; }
+  .slide.marriage-heatmap .mh-row-label {
+    font-family: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 26px;
+    fill: #f5f5f5;
+    font-weight: 600;
+  }
+  .slide.marriage-heatmap .mh-axis text {
+    font-family: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 26px;
+    fill: #d0d0d0;
+    font-weight: 500;
+  }
+  .slide.marriage-heatmap .mh-axis line { stroke: #666; }
+  .slide.marriage-heatmap .mh-axis path { stroke: #666; }
+  .slide.marriage-heatmap .mh-center-line { stroke: #ffb74d; stroke-width: 5px; shape-rendering: crispEdges; }
+  .slide.marriage-heatmap .mh-center-tag {
+    fill: #ffb74d;
+    font-family: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 3px;
+  }
+  .slide.marriage-heatmap .mh-legend {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    color: #e0e0e0;
+    font-family: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    z-index: 5;
+  }
+  .slide.marriage-heatmap .mh-legend-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #c0c0c0;
+    letter-spacing: 0.3px;
+  }
+  .slide.marriage-heatmap .mh-legend-row { display: flex; align-items: center; gap: 8px; }
+  .slide.marriage-heatmap .mh-legend-swatches { display: inline-flex; gap: 2px; }
+  .slide.marriage-heatmap .mh-legend-swatches span {
+    display: inline-block;
+    width: 18px;
+    height: 11px;
+  }
+  .slide.marriage-heatmap .mh-legend-scale {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 10px;
+    color: #888;
+  }
+  /* Movie wall slide */
+  .slide.wall {
+    padding: 33px 40px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+  .slide.wall h2 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 25px;
+    color: var(--ink);
+    text-align: center;
+  }
+  .slide.wall .cloud-stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  /* Column wells. In cloud mode they collapse — handled via .wall:not(.split) override. */
+  .slide.wall .col {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-height: 0;
+    overflow: hidden;
+    align-content: flex-start;
+  }
+  .slide.wall .col .head {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 15px;
+    margin-bottom: 3px;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .slide.wall .col .count {
+    font-family: "Benguiat", serif;
+    font-size: 9px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .slide.wall.split .col .head,
+  .slide.wall.split .col .count { opacity: 1; }
+
+  .slide.wall .col.original .head { color: #1f5fae; }
+  .slide.wall .col.remake .head { color: #c12818; }
+  .slide.wall .col.franchise .head { color: #c97a2a; }
+  .slide.wall .col.both .head { color: #6a3a8a; }
+
+  /* Movie tiles. In cloud mode they overlap on a single canvas; transitioning .split
+     just moves each tile to its category column via grid-area: span 4 vs natural. */
+  .slide.wall .tile {
+    font-family: "Benguiat", serif;
+    font-size: 9px;
+    color: var(--ink);
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  /* Cloud overlay layer: in cloud mode, hide the columns visually and lay tiles out in a
+     flowing wrap centered across the whole stage. */
+  .slide.wall .cloud-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    gap: 4px 9px;
+    padding: 13px;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+  .slide.wall .cloud-layer .tile {
+    font-size: 11px;
+  }
+  .slide.wall.split .cloud-layer { opacity: 0; }
+
+  /* The split columns are hidden until split mode kicks in */
+  .slide.wall:not(.split) .col { visibility: hidden; }
+  .slide.wall.split .col { visibility: visible; }
+
+  /* Animate tiles when they move. We render two parallel sets of tiles —
+     one in the cloud-layer (visible in cloud mode), one in the columns (visible in split mode).
+     The columns layer fades in with a per-tile stagger. */
+  .slide.wall .col .tile {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .slide.wall.split .col .tile {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Single-image slide (research clipping / chart fills the frame) */
+  .slide.single-image {
+    padding: 27px 40px;
+    align-items: center;
+    justify-content: center;
+  }
+  .slide.single-image img,
+  .slide.single-image video {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  /* four-1 slide with genre.png overlay revealed on click.
+     Force the base image to fill the same box the konti-video occupies:
+     both slides share .slide.single-image padding (27px 40px), and we
+     stretch the base img to 100% width/height with object-fit contain. */
+  .slide.four-1-slide > img:first-of-type {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+    align-self: center;
+  }
+  .slide.four-1-slide .four-1-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-2deg);
+    max-width: 78%;
+    max-height: 78%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.5);
+    border: 2px solid #ffffff;
+  }
+  .slide.four-1-slide .four-1-overlay.r-step {
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+  }
+  .slide.four-1-slide .four-1-overlay.r-step.shown {
+    opacity: 1;
+  }
+
+  /* Kontinentalist pair: chart on left, masala reveals on right */
+  .slide.konti-pair {
+    padding: 27px 40px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+  .slide.konti-pair .kp-left,
+  .slide.konti-pair .kp-right {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slide.konti-pair .kp-left img,
+  .slide.konti-pair .kp-right img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    padding: 0;
+    background: transparent;
+    border: 2px solid #1B5D9F;
+    outline: none;
+    box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+  }
+
+  /* Triple-image slide — three charts side by side */
+  .slide.triple {
+    padding: 27px 33px;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+  }
+  .slide.triple .row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.triple .row img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Two-image side-by-side slide (for the women-led ROI + trend pair) */
+  .slide.two-image {
+    padding: 24px;
+    align-items: stretch;
+    justify-content: center;
+  }
+  .slide.two-image .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+    gap: 24px;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+  .slide.two-image .row img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  /* Wage swap: wage-1 (left) fades out, wage-3 (full-bleed) fades in */
+  .slide.wage-swap .wg-three {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease;
+    z-index: 5;
+  }
+  .slide.wage-swap .wg-three.shown {
+    opacity: 1;
+    visibility: visible;
+  }
+  .slide.wage-swap:has(.wg-three.shown) .wg-one,
+  .slide.wage-swap:has(.wg-three.shown) .wg-pay {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .slide.wage-swap .wg-one,
+  .slide.wage-swap .wg-pay { transition: opacity 0.4s ease; }
+  .slide.wage-swap .row img.wg-pay {
+    width: 320px;
+    height: auto;
+    max-width: 320px;
+    max-height: 70%;
+  }
+
+  /* Nikkei swap: both columns stack images at the same spot; new ones fade in, old ones unmount */
+  .slide.nikkei-swap .row { position: relative; }
+  .slide.nikkei-swap .nk-left,
+  .slide.nikkei-swap .nk-right {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slide.nikkei-swap .nk-left > img,
+  .slide.nikkei-swap .nk-right > img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: opacity 0.4s ease;
+  }
+  /* nk-pair lives in the row's left half */
+  .slide.nikkei-swap .nk-pair {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(50% - 12px);
+    height: 100%;
+    transition: opacity 0.4s ease;
+  }
+  .slide.nikkei-swap .nk-two,
+  .slide.nikkei-swap .nk-three,
+  .slide.nikkei-swap .nk-four,
+  .slide.nikkei-swap .nk-pair {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .slide.nikkei-swap .nk-two.shown,
+  .slide.nikkei-swap .nk-three.shown,
+  .slide.nikkei-swap .nk-four.shown,
+  .slide.nikkei-swap .nk-pair.shown {
+    opacity: 1;
+    visibility: visible;
+  }
+  /* Each new step removes the previous image */
+  .slide.nikkei-swap:has(.nk-two.shown) .nk-print { opacity: 0; visibility: hidden; }
+  .slide.nikkei-swap:has(.nk-three.shown) .nk-two { opacity: 0; visibility: hidden; }
+  .slide.nikkei-swap:has(.nk-four.shown) .nk-three { opacity: 0; visibility: hidden; }
+  .slide.nikkei-swap:has(.nk-pair.shown) .nk-one,
+  .slide.nikkei-swap:has(.nk-pair.shown) .nk-four { opacity: 0; visibility: hidden; }
+
+  /* Right-side layout: badhaai-ho + tumhari-sulu side-by-side on top, burqa below */
+  .slide.nikkei-swap .nk-posters {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: calc(50% - 12px);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease;
+  }
+  .slide.nikkei-swap .nk-posters .nk-posters-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    max-height: 50%;
+  }
+  .slide.nikkei-swap .nk-posters .nk-posters-row img {
+    max-width: calc(50% - 6px);
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border: 2px solid #ffffff;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  }
+  .slide.nikkei-swap .nk-posters .nk-posters-below {
+    max-width: 60%;
+    max-height: 42%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border: 2px solid #ffffff;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  }
+  .slide.nikkei-swap:has(.nk-pair.shown) .nk-posters {
+    opacity: 1;
+    visibility: visible;
+  }
+  /* Left-side stack: nikkei-5 above nikkei-6 */
+  .slide.nikkei-swap .nk-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .slide.nikkei-swap .nk-pair img {
+    position: static;
+    transform: none;
+    max-width: 100%;
+    max-height: calc(50% - 24px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .slide.nikkei-swap .nk-pair-title {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.25;
+    color: #f4f4f4;
+    text-align: center;
+    margin-bottom: 4px;
+    max-width: 100%;
+  }
+  .slide.two-image.temple-row {
+    flex-direction: column;
+    padding: 38px 64px 50px;
+    gap: 22px;
+    align-items: stretch;
+  }
+  .slide.two-image.temple-row .stars-gods-title {
+    font-family: "Taprom", "Benguiat", serif;
+    font-weight: 700;
+    font-size: 40px;
+    color: #1B5D9F;
+    text-align: left;
+    line-height: 1.05;
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .slide.two-image.temple-row .row {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 72px;
+    align-items: stretch;
+    justify-content: center;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .slide.two-image.temple-row .left-col {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 14px;
+    align-items: center;
+    height: 100%;
+    min-height: 0;
+  }
+  .slide.two-image.temple-row .left-col .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    min-height: 0;
+    align-items: center;
+  }
+  .slide.two-image.temple-row .left-col .stack figure {
+    flex: 1 1 0;
+    width: 100%;
+  }
+  .slide.two-image.temple-row .right-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+    min-height: 0;
+  }
+  .slide.two-image.temple-row .right-col > figure {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+  .slide.two-image.temple-row .right-col .locator {
+    width: 70%;
+  }
+  /* Cinema-style mat: thin inner trim, thick cream mat, deep shadow */
+  .slide.two-image.temple-row figure {
+    margin: 0;
+    padding: 6px;
+    background: #f8f8f8;
+    border: 2px solid #1B5D9F;
+    outline: 1px solid rgba(27, 93, 159, 0.25);
+    outline-offset: -8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 12px 24px -10px rgba(0, 0, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    display: block;
+    min-height: 0;
+    overflow: hidden;
+    line-height: 0;
+  }
+  .slide.two-image.temple-row figure img,
+  .slide.two-image.temple-row figure video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .slide.two-image.temple-row .locator {
+    padding: 4px;
+    border: 2px solid #1B5D9F;
+    background: #fff;
+    box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    align-self: center;
+    width: 100%;
+  }
+  .slide.two-image.temple-row .locator img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .slide.two-image.temple-row .cap {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 14px;
+    color: #1B5D9F;
+    text-align: center;
+    line-height: 1.35;
+    max-width: 40ch;
+    margin-top: 2px;
+  }
+
+  /* Stages wrap: fills the remaining slide height below the title.
+     Each stage is absolutely positioned inside this wrap so they overlap. */
+  .slide.two-image.temple-row .stages-wrap {
+    position: relative;
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+  }
+  .slide.two-image.temple-row .row {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+  .slide.two-image.temple-row .temples-stage.hidden,
+  .slide.two-image.temple-row .portrait-collage-stage.hidden,
+  .slide.two-image.temple-row .trio-stage.hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Smoother per-figure reveal inside the swapped stages */
+  .slide.two-image.temple-row .portrait-collage-stage .r-step,
+  .slide.two-image.temple-row .trio-stage .r-step {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .r-step.shown,
+  .slide.two-image.temple-row .trio-stage .r-step.shown {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  /* Stage 2 — film-reel strip across the middle of the slide */
+  .slide.two-image.temple-row .portrait-collage-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    overflow: hidden;
+    height: 100%;
+    min-height: 0;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-collage-title {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 20px;
+    color: #1B5D9F;
+    text-align: center;
+    line-height: 1.1;
+    margin-top: 4px;
+  }
+  /* Stage 2 split layout — map on the left, photo panel on the right */
+  .slide.two-image.temple-row .portrait-collage-stage .pc-split {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0;
+    box-sizing: border-box;
+    align-items: stretch;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-left {
+    position: relative;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-map {
+    margin: 0;
+    min-height: 0;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    transition: opacity 0.4s ease;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-birthday {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    aspect-ratio: 16 / 15;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 2;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-birthday.shown {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-birthday figure {
+    flex: 1 1 0;
+    margin: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-birthday figure img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-map img {
+    height: 100%;
+    width: auto;
+    display: block;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-right {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+    transition: opacity 0.35s ease;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-tile {
+    margin: 0;
+    border: 2px solid #1B5D9F;
+    box-shadow:
+      0 8px 18px -8px rgba(0, 0, 0, 0.28),
+      0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    line-height: 0;
+    min-width: 0;
+    min-height: 0;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-portrait {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.98) !important;
+    width: 72%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    max-height: 100%;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 2;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-portrait.shown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* When the 5th photo is visible, dim the map and the 4-photo grid significantly */
+  .slide.two-image.temple-row .portrait-collage-stage .pc-split:has(.pc-portrait.shown) .pc-map,
+  .slide.two-image.temple-row .portrait-collage-stage .pc-right:has(.pc-portrait.shown) .pc-grid {
+    opacity: 0.18;
+    transition: opacity 0.4s ease;
+  }
+  /* When SRK birthday stack is visible, hide the map and the faded 4-photo grid entirely (the 5th photo stays) */
+  .slide.two-image.temple-row .portrait-collage-stage .pc-split:has(.pc-birthday.shown) .pc-map,
+  .slide.two-image.temple-row .portrait-collage-stage .pc-split:has(.pc-birthday.shown) .pc-grid {
+    opacity: 0;
+  }
+  /* Video slot — overlaid on the right side, replacing the 5th photo */
+  .slide.two-image.temple-row .portrait-collage-stage .pc-video {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: calc(100% / 2.05);
+    aspect-ratio: 16 / 9;
+    height: auto;
+    max-height: 100%;
+    transform: translateY(-50%) scale(0.98) !important;
+    margin: 0;
+    min-width: 0;
+    min-height: 0;
+    display: block;
+    overflow: hidden;
+    border: 2px solid #1B5D9F;
+    box-shadow:
+      0 8px 18px -8px rgba(0, 0, 0, 0.28),
+      0 2px 4px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 3;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-video.shown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(-50%) scale(1) !important;
+  }
+  .slide.two-image.temple-row .portrait-collage-stage .pc-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* When the video is visible, hide the 5th photo */
+  .slide.two-image.temple-row .portrait-collage-stage .pc-split:has(.pc-video.shown) .pc-portrait {
+    opacity: 0;
+  }
+
+  /* Stage 3 — two landscape photos stacked on left (wider), video on right */
+  .slide.two-image.temple-row .trio-stage {
+    position: relative;
+    display: block;
+    padding: 0;
+  }
+  .slide.two-image.temple-row .trio-stage .trio-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    width: 100%;
+    min-height: 0;
+    justify-content: center;
+  }
+  .slide.two-image.temple-row .trio-stage .trio-left figure {
+    flex: 1 1 0;
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    line-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .slide.two-image.temple-row .trio-stage .trio-left figure img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .slide.two-image.temple-row .trio-stage .trio-video {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 2;
+  }
+  .slide.two-image.temple-row .trio-stage .trio-video video {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .slide.two-image.mint-pair {
+    padding: 20px;
+  }
+  .slide.two-image.mint-pair .row {
+    gap: 32px;
+    align-items: center;
+    justify-items: center;
+  }
+  .slide.two-image.mint-pair .row img {
+    height: 100%;
+    max-height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  /* Bridge title slide — headline on top, HR + directories on left, bar chart on right */
+  .slide.how-title {
+    padding: 28px 60px 32px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    text-align: left;
+    gap: 20px;
+    background: var(--bg);
+  }
+  .slide.how-title .how-title-text {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 40px;
+    color: #1B5D9F;
+    line-height: 1.15;
+    margin: 0;
+  }
+  .slide.how-title .how-title-body {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .slide.how-title .how-title-cell {
+    flex: 0 0 auto;
+    max-width: 26%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+    max-height: 100%;
+  }
+  .slide.how-title .how-title-caption {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 16px;
+    color: #1B5D9F;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .slide.how-title .how-title-img {
+    flex: 0 1 auto;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    padding: 6px;
+    background: #f8f8f8;
+    border: 2px solid #1B5D9F;
+    outline: 1px solid rgba(27, 93, 159, 0.25);
+    outline-offset: -8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 12px 24px -10px rgba(0, 0, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+  }
+  .slide.how-title .how-title-eq {
+    flex: 0 0 auto;
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 40px;
+    color: #1B5D9F;
+    line-height: 1;
+  }
+  .slide.how-title .how-title-chartbox {
+    flex: 1 1 0;
+    min-width: 0;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 10px;
+  }
+  .slide.how-title .how-title-chart-title {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #1B5D9F;
+    line-height: 1.2;
+    margin: 0;
+  }
+  .slide.how-title .how-title-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .slide.how-title .lwc-row {
+    display: grid;
+    grid-template-columns: 72px 1fr 32px;
+    align-items: center;
+    gap: 10px;
+  }
+  .slide.how-title .lwc-label {
+    text-align: right;
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .slide.how-title .lwc-bar-track {
+    position: relative;
+    height: 12px;
+  }
+  .slide.how-title .lwc-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: #1B5D9F;
+  }
+  .slide.how-title .lwc-value {
+    text-align: left;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 600;
+    color: #1B5D9F;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  /* Thank-you slide: left rolls credits from bottom, right cycles through 3 images */
+  .slide.thanks {
+    padding: 40px 53px;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 53px;
+  }
+  .slide.thanks .left {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide.thanks .thanks-credits {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    color: var(--accent2);
+    font-family: "Benguiat", serif;
+  }
+  .slide.thanks .thanks-headline {
+    font-family: "Taprom", "Benguiat", serif;
+    font-weight: 700;
+    font-size: 64px;
+    color: var(--accent2);
+    line-height: 1;
+    margin: 0 0 22px 0;
+  }
+  .slide.thanks .thanks-roll-credits {
+    font-family: "Taprom", "Benguiat", serif;
+    font-size: 26px;
+    color: var(--accent2);
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+    margin-bottom: 18px;
+  }
+  .slide.thanks .thanks-contact {
+    font-family: "Benguiat", serif;
+    font-size: 18px;
+    color: var(--accent2);
+    line-height: 1.6;
+  }
+  @keyframes thanks-roll {
+    0%   { transform: translateY(200%); }
+    100% { transform: translateY(-50%); }
+  }
+
+  .slide.thanks .right {
+    flex: 1;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slide.thanks .thanks-img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: opacity 0.45s ease;
+  }
+  .slide.thanks .thanks-img-stall {
+    opacity: 1;
+  }
+  .slide.thanks .thanks-img-pop,
+  .slide.thanks .thanks-img-challenge {
+    opacity: 0;
+  }
+  .slide.thanks .thanks-img-pop.r-step.shown { opacity: 1; }
+  .slide.thanks .thanks-img-challenge.r-step.shown { opacity: 1; }
+  /* When pop is shown, hide the stall */
+  .slide.thanks:has(.thanks-img-pop.shown) .thanks-img-stall { opacity: 0; }
+  /* When challenge is shown, hide pop and stall */
+  .slide.thanks:has(.thanks-img-challenge.shown) .thanks-img-stall,
+  .slide.thanks:has(.thanks-img-challenge.shown) .thanks-img-pop { opacity: 0; }
+
+  /* Embedded HTML slide (iframe) — kept for future use */
+  .slide.embed {
+    padding: 0;
+  }
+  .slide.embed iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .slide.embed-pair {
+    padding: 24px;
+  }
+  .slide.embed-pair .row {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+    justify-content: center;
+  }
+  .slide.embed-pair iframe {
+    flex: 1 1 50%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+  }
+  .slide.embed-pair img {
+    flex: 1 1 50%;
+    max-width: 50%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Final bullets slide */
+  .slide.questions {
+    padding: 40px 80px;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+    flex-direction: column;
+    gap: 21px;
+  }
+  .slide.questions h2 {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: 24px;
+    color: var(--accent2);
+    margin-bottom: 8px;
+    letter-spacing: 0.03em;
+  }
+  .slide.questions ol {
+    list-style: none;
+    counter-reset: q;
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+    width: 100%;
+  }
+  .slide.questions ol li {
+    counter-increment: q;
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 35px;
+    color: var(--ink);
+    line-height: 1.15;
+    display: flex;
+    align-items: baseline;
+    gap: 19px;
+  }
+  .slide.questions ol li::before {
+    content: counter(q, decimal-leading-zero);
+    color: var(--accent);
+    font-size: 24px;
+    font-style: italic;
+    font-weight: 400;
+    flex: 0 0 auto;
+    min-width: 40px;
+  }
+
+  /* Meme / full-bleed slide */
+  .slide.meme img {
+    max-width: 85vw;
+    max-height: 65vh;
+    object-fit: contain;
+    border: 1px solid var(--rule);
+  }
+  .slide.meme .caption {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.2vw, 1.8rem);
+    color: var(--ink);
+    margin-top: 2rem;
+    max-width: 70ch;
+  }
+
+  /* I have a problem — two column */
+  .slide.problem {
+    flex-direction: row;
+    align-items: center;
+    gap: 5vw;
+    text-align: left;
+  }
+  .slide.problem .text { max-width: 38ch; }
+  .slide.problem .text h1 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--ink);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+  }
+  .slide.problem .text p {
+    font-family: "Benguiat", serif;
+    font-size: clamp(1rem, 1.7vw, 1.35rem);
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 1rem;
+  }
+  .slide.problem .text .punch {
+    color: var(--accent);
+    font-style: italic;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    margin-top: 1.5rem;
+  }
+  .slide.problem .shot {
+    max-width: 38vw;
+    max-height: 75vh;
+    border: 1px solid var(--rule);
+  }
+
+  /* Quote slide */
+  .slide.quote .marks {
+    font-family: "Benguiat", serif;
+    font-size: clamp(4rem, 10vw, 8rem);
+    color: var(--accent);
+    line-height: 0.6;
+    margin-bottom: 1rem;
+  }
+  .slide.quote blockquote {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+    color: var(--ink);
+    max-width: 22ch;
+    line-height: 1.25;
+    margin: 0 auto 1.5rem;
+  }
+  .slide.quote .attrib {
+    font-family: "Benguiat", serif;
+    font-size: clamp(0.85rem, 1.2vw, 1rem);
+    color: var(--muted);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  /* Topic / chapter intros */
+  .slide.topic .badge {
+    display: inline-block;
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: clamp(0.75rem, 1.1vw, 0.95rem);
+    color: var(--bg);
+    background: var(--ink);
+    padding: 0.4rem 1.1rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+  }
+  .slide.topic h1 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: clamp(2.5rem, 7vw, 6rem);
+    color: var(--ink);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+  .slide.topic .tagline {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: clamp(1rem, 1.8vw, 1.4rem);
+    color: var(--muted);
+    max-width: 50ch;
+    line-height: 1.5;
+  }
+
+  /* Feature slide */
+  .slide.feature { padding: 4vh 4vw; justify-content: center; }
+  .slide.feature h2 {
+    font-family: "Benguiat", serif;
+    font-style: italic;
+    font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+    color: var(--accent2);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    max-width: 25ch;
+  }
+  .slide.feature img {
+    max-width: 85vw;
+    max-height: 60vh;
+    border: 1px solid var(--rule);
+  }
+
+  /* Remakes: 8-pair grid, 4 columns x 2 rows */
+  .slide.remakes {
+    padding: 27px 40px;
+    justify-content: center;
+    gap: 13px;
+  }
+  .slide.remakes h2 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 29px;
+    color: var(--ink);
+    text-align: center;
+    margin: 0;
+  }
+  .slide.remakes h2 .pink { color: var(--accent); }
+  .slide.remakes .pairs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.remakes .pair {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-height: 0;
+  }
+  .slide.remakes .pair .images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .slide.remakes .pair .images img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 0;
+  }
+  .slide.remakes .pair .label {
+    font-family: "Benguiat", serif;
+    font-size: 9px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+  }
+  .slide.remakes .pair .label .pink { color: var(--accent); font-weight: 700; }
+
+  /* Navigation — bottom-right, outside the scaled deck */
+  .nav {
+    display: none;
+    position: fixed;
+    bottom: 0.75rem;
+    right: 1.25rem;
+    z-index: 100;
+    gap: 0.5rem;
+    align-items: center;
+    color: #888;
+    font-family: -apple-system, sans-serif;
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+  }
+  .nav button {
+    background: transparent;
+    border: 1px solid #888;
+    color: #444;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav button:hover { background: #333; color: #fff; border-color: #333; }
+  .nav .counter { min-width: 3.5rem; text-align: center; font-variant-numeric: tabular-nums; }
+
+  ul {
+    list-style: none;
+    text-align: left;
+    font-family: "Benguiat", serif;
+    font-size: clamp(1rem, 1.7vw, 1.3rem);
+    line-height: 1.8;
+    max-width: 50ch;
+    color: var(--ink);
+  }
+  ul li::before {
+    content: "—  ";
+    color: var(--accent);
+  }
+
+  /* ===== Streamgraph slide ===== */
+  .slide.streamgraph {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 0;
+    text-align: left;
+  }
+  .slide.streamgraph .sg-header { padding: 38px 64px 0 64px; }
+  .slide.streamgraph .sg-stage {
+    max-height: 72%;
+    width: 100%;
+    position: relative;
+    /* allow Shakespeare to sit below the stage, flush with slide bottom */
+  }
+  /* Shakespeare lives on the SLIDE (not the stage) so he can sit flush at the slide's bottom edge */
+  .slide.streamgraph .sg-shakespeare {
+    position: absolute;
+    left: 36px;
+    bottom: 0;
+    width: 320px;
+    height: auto;
+    opacity: 1;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .slide.streamgraph .sg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 60px;
+  }
+  .slide.streamgraph h2 {
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    font-size: 40px;
+    color: #1B5D9F;
+    line-height: 1.05;
+    margin: 0;
+  }
+  .slide.streamgraph .sg-subtitle {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    color: #2a2a2a;
+    line-height: 1.1;
+    margin-top: 4px;
+    letter-spacing: 0.01em;
+  }
+  .slide.streamgraph .sg-stage {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+  }
+  .slide.streamgraph svg { width: 100%; height: 100%; display: block; }
+  .sg-layer-label {
+    fill: #fff;
+    font-family: "Benguiat", serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+  }
+  .sg-axis text {
+    fill: #6a6a6a;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+  }
+  .sg-event-line {
+    stroke: #1a1a1a;
+    stroke-width: 1.4;
+    stroke-dasharray: 4 4;
+  }
+  .sg-event-label {
+    fill: #1a1a1a;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sg-word {
+    pointer-events: none;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 600;
+  }
