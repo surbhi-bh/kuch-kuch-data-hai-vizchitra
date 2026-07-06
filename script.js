@@ -1776,6 +1776,8 @@
     if (!svg || typeof d3 === 'undefined') return;
     const W = 720, H = 640;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('width', W);
+    svg.setAttribute('height', H);
     svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
     // Equilateral triangle of circle centers for a balanced 3-set Venn.
