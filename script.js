@@ -442,6 +442,9 @@
     let W, H, margin, innerW, innerH, xScale, yScale, layers;
     let layerPaths, layerLabels, measureNode;
     let built = false;
+    let measureCache = new Map();
+    let wordPlacementsCache = null;   // { key, layers: [{lang, fill, placed}] }
+    let iconicSetCache = null;
 
     function measure() {
       const stage = slide.querySelector('.sg-stage');
@@ -454,13 +457,18 @@
       svgSel.attr('viewBox', `0 0 ${W} ${H}`).attr('preserveAspectRatio', 'xMidYMid meet');
     }
     function measureText(str, fs, fw) {
+      const key = `${str}|${fs}|${fw || 700}`;
+      const hit = measureCache.get(key);
+      if (hit !== undefined) return hit;
       if (!measureNode) {
         measureNode = svgSel.append('text')
           .style('visibility', 'hidden')
           .attr('font-family', '"Benguiat", serif');
       }
       measureNode.attr('font-size', fs).attr('font-weight', fw || 700).text(str);
-      return measureNode.node().getComputedTextLength();
+      const w = measureNode.node().getComputedTextLength();
+      measureCache.set(key, w);
+      return w;
     }
     function buildLayers() {
       xScale = d3.scaleLinear().domain([yMin, yMax]).range([margin.left, margin.left + innerW]);
@@ -493,8 +501,68 @@
           .text(y);
       });
     }
+    function renderEventLine(delayMs) {
+      svgSel.selectAll('.sg-event').remove();
+      const g = svgSel.append('g').attr('class', 'sg-event').style('opacity', 0);
+      const x = xScale(1991);
+      const yTop = margin.top;
+      const yBot = margin.top + innerH;
+
+      g.append('line')
+        .attr('class', 'sg-event-line')
+        .attr('x1', x).attr('x2', x)
+        .attr('y1', yTop).attr('y2', yBot);
+
+      // top cap dot
+      g.append('circle')
+        .attr('class', 'sg-event-dot')
+        .attr('cx', x).attr('cy', yTop)
+        .attr('r', 3.5);
+
+      // two-line label sitting to the right of the line, near the top
+      const labelX = x + 10;
+      const labelYear = g.append('text')
+        .attr('class', 'sg-event-year')
+        .attr('x', labelX)
+        .attr('y', yTop + 22)
+        .attr('text-anchor', 'start')
+        .text('1991');
+      g.append('text')
+        .attr('class', 'sg-event-label')
+        .attr('x', labelX)
+        .attr('y', yTop + 40)
+        .attr('text-anchor', 'start')
+        .text('Economic liberalisation');
+
+      // animated line draw
+      const lineLen = yBot - yTop;
+      g.select('.sg-event-line')
+        .attr('stroke-dasharray', `${lineLen} ${lineLen}`)
+        .attr('stroke-dashoffset', lineLen);
+
+      g.style('opacity', 1);
+      g.select('.sg-event-line')
+        .transition()
+        .delay(delayMs || 0)
+        .duration(700)
+        .ease(d3.easeCubicOut)
+        .attr('stroke-dashoffset', 0);
+      g.select('.sg-event-dot')
+        .style('opacity', 0)
+        .transition()
+        .delay((delayMs || 0) + 550)
+        .duration(260)
+        .style('opacity', 1);
+      g.selectAll('.sg-event-year, .sg-event-label')
+        .style('opacity', 0)
+        .transition()
+        .delay((delayMs || 0) + 400)
+        .duration(500)
+        .style('opacity', 1);
+    }
+
     function renderStream() {
-      svgSel.selectAll('.sg-stream, defs').remove();
+      svgSel.selectAll('.sg-stream, .sg-event, defs').remove();
 
       // Per-layer clip paths so each stream rolls in independently
       const defs = svgSel.append('defs');
@@ -529,6 +597,8 @@
           .ease(d3.easeCubicOut)
           .attr('width', innerW);
       });
+
+      renderEventLine(rollOrder.length * 220 + 1500);
 
       layerLabels = g.selectAll('g.sg-label-g')
         .data(layers).join('g').attr('class', 'sg-label-g');
@@ -584,21 +654,18 @@
     // using a per-pixel-column "top of free space" array per row (a skyline).
     // After the chronological pass, run a fill pass to plug remaining gaps with
     // bigger versions of representative titles.
-    function renderWords() {
-      svgSel.selectAll('.sg-words').remove();
-      const g = svgSel.append('g').attr('class', 'sg-words');
+    const WORD_FILL = {
+      'Hindi':    'rgb(232, 163, 61)',
+      'Urdu':     'rgb(17, 93, 131)',
+      'Hinglish': 'rgb(196, 161, 50)',
+      'English':  '#2a2a2a'
+    };
 
-      // Words use the stream's color, but lighten/darken just enough to be legible on the slide bg
-      const wordFill = {
-        'Hindi':    'rgb(232, 163, 61)',   // gold reads fine on light bg
-        'Urdu':     'rgb(17, 93, 131)',
-        'Hinglish': 'rgb(196, 161, 50)',   // darker mustard so it shows on bg
-        'English':  '#2a2a2a'
-      };
-
+    function computeWordPlacements() {
+      const out = [];
       layers.forEach((layer, layerIdx) => {
         const lang = layer.key;
-        const fill = wordFill[lang];
+        const fill = WORD_FILL[lang];
 
         const yTopAt = d3.scaleLinear()
           .domain(layer.map(d => xScale(d.data.year)))
@@ -902,32 +969,55 @@
         console.log(`[${lang}] films: ${films.length}, placed: ${realPlaced}, dropped: ${dropped.length}, fillers: ${placed.length - realPlaced}`);
         if (dropped.length) console.log(`[${lang}] dropped:`, dropped.map(f => `${f.t} (${f.y})`).join(', '));
 
-        // Render — only horizontal or vertical (no tilt). Tiny jitter so films stay in their era.
-        placed.forEach((p, i) => {
+        // freeze precomputed positions (with jitter) and iconic flag so paint is DOM-only work
+        const frozen = placed.map((p, i) => {
           const seed = (p.f.y * 11 + i * 17 + (p.f.t.length * 3)) % 1000;
-          const jx = ((seed * 0.13) % 2.4) - 1.2;    // ~[-1.2, 1.2] px (well under colWidth)
-          const jy = (((seed * 0.27) % 3) - 1.5);    // ~[-1.5, 1.5] px
-          const cx = p.cx + jx;
-          const cy = p.cy + jy;
+          const jx = ((seed * 0.13) % 2.4) - 1.2;
+          const jy = (((seed * 0.27) % 3) - 1.5);
+          return {
+            t: p.f.t,
+            fs: p.fs,
+            cx: p.cx + jx,
+            cy: p.cy + jy,
+            vertical: !!p.vertical,
+            filler: !!p.filler,
+            iconic: iconic.has(p.f.t.toLowerCase())
+          };
+        });
+        out.push({ lang, layerIdx, fill, placed: frozen });
+      });
+      return out;
+    }
+
+    function renderWords() {
+      svgSel.selectAll('.sg-words').remove();
+      const g = svgSel.append('g').attr('class', 'sg-words');
+
+      const key = `${Math.round(W)}x${Math.round(H)}`;
+      if (!wordPlacementsCache || wordPlacementsCache.key !== key) {
+        wordPlacementsCache = { key, layers: computeWordPlacements() };
+      }
+
+      wordPlacementsCache.layers.forEach(({ layerIdx, fill, placed }) => {
+        placed.forEach((p, i) => {
           const node = g.append('text')
             .attr('class', 'sg-word')
-            .attr('x', cx)
-            .attr('y', cy)
+            .attr('x', p.cx)
+            .attr('y', p.cy)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'middle')
             .attr('font-size', p.fs)
-            .attr('font-weight', p.f && iconic.has(p.f.t.toLowerCase()) ? 700 : 600)
+            .attr('font-weight', p.iconic ? 700 : 600)
             .attr('letter-spacing', '0.005em')
             .attr('fill', fill)
             .style('opacity', 0)
-            .text(p.f.t);
+            .text(p.t);
           if (p.vertical) {
-            node.attr('transform', `rotate(-90, ${cx}, ${cy})`);
+            node.attr('transform', `rotate(-90, ${p.cx}, ${p.cy})`);
           }
-          // no tilt for horizontal words
           node.transition()
-            .duration(360)
-            .delay(layerIdx * 50 + i * 3)
+            .duration(220)
+            .delay(layerIdx * 20 + i * 0.6)
             .style('opacity', p.filler ? 0.75 : 0.97);
         });
       });
@@ -949,17 +1039,18 @@
       // Snap clips wide-open — no wipe animation during dissolve
       svgSel.selectAll('[class^="sg-clip-rect-"]').interrupt().attr('width', innerW);
       slide.classList.add('dissolved');
-      if (layerLabels) layerLabels.transition('lbl').duration(260).style('opacity', 0);
+      if (layerLabels) layerLabels.transition('lbl').duration(180).style('opacity', 0);
       layerPaths.interrupt('stream');
       layerPaths
         .transition('stream')
-        .duration(900)
+        .duration(450)
         .ease(d3.easeCubicInOut)
         .attr('fill-opacity', 0)
         .attr('stroke', d => palette[d.key])
         .attr('stroke-width', 1.6)
         .attr('stroke-opacity', 0.9);
-      setTimeout(renderWords, 550);
+      svgSel.selectAll('.sg-event').interrupt().transition().duration(180).style('opacity', 0);
+      setTimeout(renderWords, 180);
       const hint = slide.querySelector('.sg-hint-text');
       if (hint) hint.style.opacity = 0;
     }
@@ -1003,6 +1094,21 @@
     }
     initialBuild();
 
+    // Warm the placement cache in idle time so the dissolve-to-words transition
+    // is DOM-only work when the user actually triggers it.
+    function precomputePlacements() {
+      if (wordPlacementsCache && wordPlacementsCache.key === `${Math.round(W)}x${Math.round(H)}`) return;
+      const key = `${Math.round(W)}x${Math.round(H)}`;
+      wordPlacementsCache = { key, layers: computeWordPlacements() };
+    }
+    const scheduleIdle = window.requestIdleCallback
+      ? (fn) => window.requestIdleCallback(fn, { timeout: 1500 })
+      : (fn) => setTimeout(fn, 300);
+    scheduleIdle(precomputePlacements);
+
+    // Invalidate the placement cache on resize — geometry changes make old placements wrong
+    window.addEventListener('resize', () => { wordPlacementsCache = null; });
+
     function restartWipe() {
       // Reset opacities in case the slide was last left dissolved
       svgSel.selectAll('.sg-words').remove();
@@ -1025,6 +1131,7 @@
       if (layerLabels) {
         layerLabels.transition('lbl').delay(900).duration(400).style('opacity', 1);
       }
+      renderEventLine(rollOrder.length * 220 + 1500);
     }
 
     // Hook slide-active and trigger-shown transitions

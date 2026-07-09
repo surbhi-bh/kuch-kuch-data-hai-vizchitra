@@ -4989,15 +4989,26 @@
   }
   .sg-event-line {
     stroke: #1a1a1a;
-    stroke-width: 1.4;
-    stroke-dasharray: 4 4;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    opacity: 0.85;
+  }
+  .sg-event-dot {
+    fill: #1a1a1a;
+  }
+  .sg-event-year {
+    fill: #1a1a1a;
+    font-family: "Benguiat", "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.01em;
   }
   .sg-event-label {
     fill: #1a1a1a;
     font-family: "IBM Plex Sans", system-ui, sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.04em;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
   .sg-word {
