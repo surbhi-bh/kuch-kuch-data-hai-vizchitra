@@ -586,19 +586,21 @@
           .attr('stroke-width', 2.2)
           .attr('clip-path', (_, idx) => `url(#sg-clip-${idx})`);
 
-      // Animate each layer's clip — Urdu rolls in first, then Hindi, Hinglish, English
+      // Layers roll in independently — Urdu first, then Hindi, Hinglish, English.
+      // Tight stagger so each starts before the previous one finishes.
       const rollOrder = ['Urdu', 'Hindi', 'Hinglish', 'English'];
+      const stagger = 90;
       layers.forEach((layer, idx) => {
         const orderPos = rollOrder.indexOf(layer.key);
         svgSel.select(`.sg-clip-rect-${idx}`)
           .transition()
-          .delay(orderPos * 220)
+          .delay(orderPos * stagger)
           .duration(1500)
           .ease(d3.easeCubicOut)
           .attr('width', innerW);
       });
 
-      renderEventLine(rollOrder.length * 220 + 1500);
+      renderEventLine(rollOrder.length * stagger + 1500);
 
       layerLabels = g.selectAll('g.sg-label-g')
         .data(layers).join('g').attr('class', 'sg-label-g');
@@ -1130,13 +1132,16 @@
       if (layerLabels) layerLabels.interrupt().style('opacity', 0);
 
       // Snap every clip back to width 0, then animate left-to-right roll-in.
+      // Layers roll in independently — Urdu first, then Hindi, Hinglish, English.
+      // Tight stagger so each starts before the previous one finishes.
       const rollOrder = ['Urdu', 'Hindi', 'Hinglish', 'English'];
+      const stagger = 90;
       layers.forEach((layer, idx) => {
         const rect = svgSel.select(`.sg-clip-rect-${idx}`);
         rect.interrupt().attr('width', 0);
         const orderPos = rollOrder.indexOf(layer.key);
         rect.transition()
-          .delay(orderPos * 220)
+          .delay(orderPos * stagger)
           .duration(1500)
           .ease(d3.easeCubicOut)
           .attr('width', innerW);
@@ -1145,7 +1150,7 @@
       if (layerLabels) {
         layerLabels.transition('lbl').delay(900).duration(400).style('opacity', 1);
       }
-      renderEventLine(rollOrder.length * 220 + 1500);
+      renderEventLine(rollOrder.length * stagger + 1500);
 
       // Now that we have trustworthy geometry, warm the placements cache in
       // idle time so the dissolve-to-words transition is DOM-only work.
