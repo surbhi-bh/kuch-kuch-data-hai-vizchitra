@@ -1036,6 +1036,10 @@
       svgSel.selectAll('*').remove();
       measureNode = null;
       build();
+      // Invalidate any pre-warmed placement cache — it may have been computed
+      // against a hidden/mis-measured stage, which causes every word to end up
+      // at the top of the streams on the first dissolve.
+      wordPlacementsCache = null;
       // Snap clips wide-open — no wipe animation during dissolve
       svgSel.selectAll('[class^="sg-clip-rect-"]').interrupt().attr('width', innerW);
       slide.classList.add('dissolved');
@@ -1096,7 +1100,11 @@
 
     // Warm the placement cache in idle time so the dissolve-to-words transition
     // is DOM-only work when the user actually triggers it.
+    // Only run this AFTER the slide has actually been visible — otherwise the
+    // stage measurements are unreliable and every word ends up glued to the
+    // top of the streams on first dissolve.
     function precomputePlacements() {
+      if (!slide.classList.contains('active')) return;
       if (wordPlacementsCache && wordPlacementsCache.key === `${Math.round(W)}x${Math.round(H)}`) return;
       const key = `${Math.round(W)}x${Math.round(H)}`;
       wordPlacementsCache = { key, layers: computeWordPlacements() };
@@ -1104,14 +1112,20 @@
     const scheduleIdle = window.requestIdleCallback
       ? (fn) => window.requestIdleCallback(fn, { timeout: 1500 })
       : (fn) => setTimeout(fn, 300);
-    scheduleIdle(precomputePlacements);
 
     // Invalidate the placement cache on resize — geometry changes make old placements wrong
     window.addEventListener('resize', () => { wordPlacementsCache = null; });
 
     function restartWipe() {
+      // Now that the slide is truly visible, rebuild so scales reflect the
+      // real stage size (initialBuild may have measured a hidden container).
+      svgSel.selectAll('*').remove();
+      measureNode = null;
+      build();
+      // Any cache warmed while hidden is unreliable — drop it.
+      wordPlacementsCache = null;
+
       // Reset opacities in case the slide was last left dissolved
-      svgSel.selectAll('.sg-words').remove();
       if (layerPaths) layerPaths.interrupt().attr('fill-opacity', 1).attr('stroke-opacity', 1);
       if (layerLabels) layerLabels.interrupt().style('opacity', 0);
 
@@ -1132,11 +1146,19 @@
         layerLabels.transition('lbl').delay(900).duration(400).style('opacity', 1);
       }
       renderEventLine(rollOrder.length * 220 + 1500);
+
+      // Now that we have trustworthy geometry, warm the placements cache in
+      // idle time so the dissolve-to-words transition is DOM-only work.
+      scheduleIdle(precomputePlacements);
     }
 
     // Hook slide-active and trigger-shown transitions
     const trigger = slide.querySelector('[data-sg-dissolve]');
     let wasActive = slide.classList.contains('active');
+    // If the streamgraph slide is already active on page load (e.g. session
+    // restore landed here), run the wipe now so the streams are built against
+    // the truly-visible stage rather than the hidden initialBuild measurement.
+    if (wasActive) restartWipe();
     const mo = new MutationObserver(() => {
       const nowActive = slide.classList.contains('active');
       // Only run the wipe on the *transition* into active state
